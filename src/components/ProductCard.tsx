@@ -55,7 +55,7 @@ const ProductCard = ({ thumbnail }: IProps) => {
             border: "none",
           }}
         >
-          Buy now
+          view details
         </Button>
       </Card.Footer>
     </Card.Root>

@@ -10,8 +10,14 @@ interface IProps {}
 const Products = ({}: IProps) => {
   const getProductsList = async () => {
     const { data } = await axios.get(
-      `${import.meta.env.VITE_SERVER_URL}/api/products?populate=thumbnail`,
+      `${import.meta.env.VITE_SERVER_URL}/api/products`,
+      {
+        params: {
+          populate: ["thumbnail", "categories"],
+        },
+      },
     );
+    console.log(data);
     return data;
   };
 
