@@ -2,9 +2,13 @@ import { Button, Card, Image, Text } from "@chakra-ui/react";
 import { useColorMode } from "./ui/color-mode";
 import { Link } from "react-router-dom";
 
-interface IProps {}
+interface IProps {
+  thumbnail: {
+    url: string;
+  };
+}
 
-const ProductCard = ({}: IProps) => {
+const ProductCard = ({ thumbnail }: IProps) => {
   const { colorMode } = useColorMode();
 
   return (
@@ -16,7 +20,7 @@ const ProductCard = ({}: IProps) => {
       textAlign={"center"}
     >
       <Image
-        src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
+        src={`${import.meta.env.VITE_SERVER_URL}${thumbnail?.url}`}
         alt="Green double couch with wooden legs"
         boxSize={"200px"}
         borderRadius={"full"}
