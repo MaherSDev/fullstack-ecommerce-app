@@ -12,16 +12,23 @@ import {
 } from "@chakra-ui/react";
 import { useColorMode, useColorModeValue } from "../components/ui/color-mode";
 import { FiMoon, FiSun } from "react-icons/fi";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, type LinkProps } from "react-router-dom";
+import type { ForwardRefExoticComponent, RefAttributes } from "react";
+
+interface IProps {
+  children:
+    | string
+    | ForwardRefExoticComponent<LinkProps & RefAttributes<HTMLAnchorElement>>;
+}
 
 export default function NavBar() {
   const { colorMode, toggleColorMode } = useColorMode();
   const Links = ["Dashboard", "Projects", "Team"];
 
-  const NavLink = ({ children }) => (
+  const NavLink = ({ children }: IProps) => (
     <Link
       as={RouterLink}
-      to={children.toLowerCase()}
+      to={`${children}`.toLowerCase()}
       px={2}
       py={1}
       rounded={"md"}
@@ -30,7 +37,7 @@ export default function NavBar() {
         bg: useColorModeValue("gray.200", "gray.700"),
       }}
     >
-      {children}
+      {children.toString()}
     </Link>
   );
 
