@@ -23,7 +23,7 @@ interface IProps {
 
 export default function NavBar() {
   const { colorMode, toggleColorMode } = useColorMode();
-  const Links = ["Dashboard", "Projects", "Team"];
+  const Links = ["Dashboard", "Products", "Team"];
 
   const NavLink = ({ children }: IProps) => (
     <Link
@@ -44,7 +44,7 @@ export default function NavBar() {
   return (
     <Box bg={useColorModeValue("gray.100", "gray.900")} px="4">
       <Flex h="16" align="center" justify="space-between">
-        <Box fontWeight="bold">Logo</Box>
+        <RouterLink to={"/"}>My App</RouterLink>
         <HStack as={"nav"} gap={4} display={{ base: "none", md: "flex" }}>
           {Links.map((link) => (
             <NavLink key={link}>{link}</NavLink>
@@ -52,12 +52,12 @@ export default function NavBar() {
         </HStack>
 
         <Flex align="center">
-          <Stack direction="row" gap="6">
+          <Stack direction="row" gap="6" align="center">
             {/* Dark Mode */}
             <Button onClick={toggleColorMode} size="sm">
               {colorMode === "light" ? <FiMoon /> : <FiSun />}
             </Button>
-
+            <RouterLink to={"/login"}>Login</RouterLink>
             {/* ✅ NEW MENU API */}
             <Menu.Root>
               <Menu.Trigger asChild>
