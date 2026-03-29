@@ -43,11 +43,12 @@ export default function LoginPage() {
     console.log(data);
   };
 
-  const bg = useColorModeValue("gray.100", "gray.900");
+  const bg = useColorModeValue("gray.50", "gray.800");
   const cardBg = useColorModeValue("white", "gray.800");
+  const border = useColorModeValue("gray.500", "gray.500");
 
   return (
-    <Flex minH="100vh" align="center" justify="center" bg={bg}>
+    <Flex h="full" align="center" justify="center" bg={bg}>
       <Box bg={cardBg} p={8} rounded="lg" shadow="lg" w="full" maxW="400px">
         <Heading mb={6} textAlign="center" size="lg">
           Sign in to your account
@@ -85,6 +86,8 @@ export default function LoginPage() {
                     {showPassword ? <FiEyeOff /> : <FiEye />}
                   </IconButton>
                 }
+								// border={"1px solid"}
+								borderColor={border}
               >
                 <Input
                   type={showPassword ? "text" : "password"}
