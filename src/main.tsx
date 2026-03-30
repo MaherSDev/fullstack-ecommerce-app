@@ -1,18 +1,22 @@
 import { BrowserRouter } from "react-router-dom";
-import { Provider } from "./components/ui/provider.tsx";
+import { Provider } from "react-redux";
+import { Provider as ChakraProvider } from "./components/ui/provider.tsx";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { store } from "./app/store.ts";
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
-  <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
-      <Provider>
-        <App />
-      </Provider>
-    </BrowserRouter>
-  </QueryClientProvider>,
+  <Provider store={store}>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <ChakraProvider>
+          <App />
+        </ChakraProvider>
+      </BrowserRouter>
+    </QueryClientProvider>
+  </Provider>,
 );

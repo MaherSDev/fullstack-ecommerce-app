@@ -1,3 +1,15 @@
+export interface IUserLogin {
+  identifier: string;
+  password: string;
+}
+
+export interface IUserData {
+  id: number;
+  documentId: string;
+  username: string;
+  email: string;
+}
+
 export interface IProduct {
   id: string | undefined;
   title: string;

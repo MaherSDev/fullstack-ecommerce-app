@@ -15,15 +15,18 @@ import { useColorModeValue } from "../components/ui/color-mode";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { userLogin } from "../app/feactures/loginSlice";
+import { useAppDispatch } from "../hooks/index";
 
 type LoginFormValues = {
-  email: string;
+  identifier: string;
   password: string;
   remember: boolean;
 };
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useAppDispatch();
 
   const {
     register,
@@ -33,19 +36,24 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
     defaultValues: {
-      email: "",
+      identifier: "",
       password: "",
       remember: false,
     },
   });
 
-  const onSubmit: SubmitHandler<LoginFormValues> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<LoginFormValues> = async (data, e) => {
+    e?.preventDefault();
+    const res = await dispatch(userLogin(data));
+    if (userLogin.fulfilled.match(res)) {
+      const { user, jwt } = res.payload;
+      console.log(user, jwt);
+    }
   };
 
   const bg = useColorModeValue("gray.50", "gray.800");
   const cardBg = useColorModeValue("white", "gray.800");
-  const border = useColorModeValue("gray.500", "gray.500");
+  const border = useColorModeValue("gray.200", "gray.500");
 
   return (
     <Flex h="full" align="center" justify="center" bg={bg}>
@@ -57,19 +65,20 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack gap={4}>
             {/* EMAIL */}
-            <Field.Root invalid={!!errors.email}>
+            <Field.Root invalid={!!errors.identifier}>
               <Field.Label>Email address</Field.Label>
               <Input
                 placeholder="Enter your email"
-                {...register("email", {
+                {...register("identifier", {
                   required: "Email is required",
                   pattern: {
-                    value: /^\S+@\S+$/i,
+                    value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
                     message: "Invalid email",
                   },
                 })}
+                borderColor={`${errors.identifier ? "red" : border}`}
               />
-              <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
+              <Field.ErrorText>{errors.identifier?.message}</Field.ErrorText>
             </Field.Root>
 
             {/* PASSWORD */}
@@ -86,15 +95,18 @@ export default function LoginPage() {
                     {showPassword ? <FiEyeOff /> : <FiEye />}
                   </IconButton>
                 }
-								// border={"1px solid"}
-								borderColor={border}
               >
                 <Input
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   {...register("password", {
                     required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
                   })}
+                  borderColor={`${errors.identifier ? "red" : border}`}
                 />
               </InputGroup>
               <Field.ErrorText>{errors.password?.message}</Field.ErrorText>
