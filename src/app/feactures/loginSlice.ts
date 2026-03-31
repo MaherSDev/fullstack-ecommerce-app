@@ -5,6 +5,7 @@ import {
   createSlice,
   type PayloadAction,
 } from "@reduxjs/toolkit";
+import { toaster } from "../../components/ui/toaster";
 
 interface IResponseData {
   user: IUserData | null;
@@ -55,12 +56,20 @@ const loginSlice = createSlice({
           state.loading = false;
           state.data = action.payload;
           state.error = null;
+          toaster.create({
+            title: "Login successful",
+            type: "success",
+          });
         },
       )
       .addCase(userLogin.rejected, (state, action) => {
         state.loading = false;
         state.data = { user: null, jwt: null };
         state.error = action.payload ?? "Login failed";
+        toaster.create({
+          title: state.error,
+          type: "error",
+        });
       });
   },
 });
