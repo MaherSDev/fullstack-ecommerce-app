@@ -15,7 +15,7 @@ import { useColorModeValue } from "../components/ui/color-mode";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import { userLogin } from "../app/feactures/loginSlice";
+import { userLogin } from "../app/features/loginSlice";
 import { useAppDispatch } from "../hooks/index";
 
 type LoginFormValues = {

@@ -1,11 +1,12 @@
-import axiosInstance from "../../api/axios.config";
+import axiosInstance from "@/api/axios.config";
 import type { IUserData } from "@/interfaces";
 import {
   createAsyncThunk,
   createSlice,
   type PayloadAction,
 } from "@reduxjs/toolkit";
-import { toaster } from "../../components/ui/toaster";
+import { toaster } from "@/components/ui/toaster";
+import CookieService from "@/services/CookieService";
 
 interface IResponseData {
   user: IUserData | null;
@@ -32,7 +33,6 @@ export const userLogin = createAsyncThunk<
   { identifier: string; password: string },
   { rejectValue: string }
 >("login/userLogin", async (user, { rejectWithValue }) => {
-  console.log(user);
   try {
     const { data } = await axiosInstance.post("auth/local", user);
     return data;
@@ -56,9 +56,16 @@ const loginSlice = createSlice({
           state.loading = false;
           state.data = action.payload;
           state.error = null;
+          const date: Date = new Date();
+          const IN_DAYS = 3;
+          const EXPIRE_IN_DAYS = 1000 * 60 * 60 * 24 * IN_DAYS;
+          date.setTime(date.getTime() + EXPIRE_IN_DAYS);
+          const options = { path: "/", expires: date };
+          CookieService.set("jwt", action.payload.jwt, options);
           toaster.create({
             title: "Login successful",
             type: "success",
+            closable: true,
           });
         },
       )
@@ -69,6 +76,7 @@ const loginSlice = createSlice({
         toaster.create({
           title: state.error,
           type: "error",
+          closable: true,
         });
       });
   },
