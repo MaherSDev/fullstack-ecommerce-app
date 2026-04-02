@@ -41,6 +41,7 @@ export const userLogin = createAsyncThunk<
   }
 });
 
+const daysInMS = 86400000;
 const loginSlice = createSlice({
   name: "login",
   initialState,
@@ -57,9 +58,9 @@ const loginSlice = createSlice({
           state.data = action.payload;
           state.error = null;
           const date: Date = new Date();
-          const IN_DAYS = 3;
-          const EXPIRE_IN_DAYS = 1000 * 60 * 60 * 24 * IN_DAYS;
-          date.setTime(date.getTime() + EXPIRE_IN_DAYS);
+          date.setTime(
+            date.getTime() + daysInMS * +import.meta.env.VITE_TOKEN_EXPIRE_DAYS,
+          );
           const options = { path: "/", expires: date };
           CookieService.set("jwt", action.payload.jwt, options);
           toaster.create({

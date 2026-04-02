@@ -8,18 +8,22 @@ import Products from "./components/ProductsPage";
 import NavBar from "./layout/NavBar";
 import { Box } from "@chakra-ui/react";
 import { Toaster } from "./components/ui/toaster";
+import AppLayout from "./layout/AppLayout";
 
 function App() {
   return (
     <>
-      <NavBar />
+      {/* <NavBar /> */}
       <Box as={"div"} h="calc(100dvh - 64px)">
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/team" element={<Team />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/" element={<AppLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/team" element={<Team />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
+
           <Route path="/login" element={<Login />} />
         </Routes>
       </Box>

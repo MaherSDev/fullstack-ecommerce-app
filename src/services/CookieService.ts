@@ -7,7 +7,7 @@ class CookieService {
   get(name: string) {
     return cookies.get(name);
   }
-  set(name: string, value: string | null, options: CookieSetOptions) {
+  set(name: string, value: string | null, options?: CookieSetOptions | undefined) {
     return cookies.set(name, value, options);
   }
   remove(name: string) {
