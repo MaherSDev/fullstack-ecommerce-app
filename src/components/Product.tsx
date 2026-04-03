@@ -1,39 +1,39 @@
 import { Button, Card, Flex, Image, Text } from "@chakra-ui/react";
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import ProductSkeleton from "./ui/ProductSkeleton";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { BsArrowLeft } from "react-icons/bs";
 import { useColorMode } from "./ui/color-mode";
+import axiosInstance from "@/api/axios.config";
 
-interface IProps {}
-
-const ProductPage = ({}: IProps) => {
-  const { id } = useParams();
+const ProductPage = () => {
+  const { documentId } = useParams();
   const navigate = useNavigate();
   const { colorMode } = useColorMode();
 
   const getProductData = async () => {
-    const { data } = await axios.get(
-      `${import.meta.env.VITE_SERVER_URL}/api/products/${id}`,
-      {
-        params: {
-          populate: ["thumbnail", "category"],
-        },
+    const { data } = await axiosInstance.get(`products/${documentId}`, {
+      params: {
+        populate: ["thumbnail", "categories"],
       },
-    );
+    });
     return data;
   };
 
-  const { isLoading, data } = useQuery({
-    queryKey: ["products", id],
+  const { isLoading, data, error } = useQuery({
+    queryKey: ["products", documentId],
     queryFn: getProductData,
   });
   const goBack = () => navigate(-1);
 
   if (isLoading) return <ProductSkeleton />;
 
-  console.log(data);
+  if (error || !data) {
+    return <>Error</>;
+  }
+
+  const { title, description, thumbnail, price } = data.data;
+
   return (
     <>
       <Flex
@@ -56,7 +56,7 @@ const ProductPage = ({}: IProps) => {
         textAlign={"center"}
       >
         <Image
-          // src={`${import.meta.env.VITE_SERVER_URL}${thumbnail?.url}`}
+          src={`${import.meta.env.VITE_SERVER_URL}${thumbnail?.url}`}
           alt="Green double couch with wooden legs"
           boxSize={"200px"}
           borderRadius={"full"}
@@ -64,24 +64,21 @@ const ProductPage = ({}: IProps) => {
           mx={"auto"}
         />
         <Card.Body gap={2} mt={2} fontSize={"sm"}>
-          <Card.Title>Living room Sofa</Card.Title>
-          <Card.Description>
-            This sofa is perfect for modern tropical spaces, baroque inspired
-            spaces.
-          </Card.Description>
+          <Card.Title>{title}</Card.Title>
+          <Card.Description>{description}</Card.Description>
           <Text
             textStyle="2xl"
             fontWeight="medium"
             letterSpacing="tight"
             mt="2"
           >
-            $450
+            ${price}
           </Text>
         </Card.Body>
         <Card.Footer>
           <Button
             as={Link}
-            to={"/products/1"}
+            // to={"/products/1"}
             bg={colorMode === "light" ? "#e6f3fd" : "#9f7aea"}
             color={colorMode !== "light" ? "#e6f3fd" : "#9f7aea"}
             variant="outline"
@@ -96,7 +93,7 @@ const ProductPage = ({}: IProps) => {
               border: "none",
             }}
           >
-            view details
+            Add to cart
           </Button>
         </Card.Footer>
       </Card.Root>

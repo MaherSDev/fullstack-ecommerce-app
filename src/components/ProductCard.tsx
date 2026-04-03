@@ -1,14 +1,12 @@
 import { Button, Card, Image, Text } from "@chakra-ui/react";
 import { useColorMode } from "./ui/color-mode";
 import { Link } from "react-router-dom";
+import type { IProduct } from "@/interfaces";
 
-interface IProps {
-  thumbnail: {
-    url: string;
-  };
-}
 
-const ProductCard = ({ thumbnail }: IProps) => {
+
+const ProductCard = ( product : IProduct) => {
+  const { documentId, title, description, thumbnail, price } = product;
   const { colorMode } = useColorMode();
 
   return (
@@ -28,19 +26,18 @@ const ProductCard = ({ thumbnail }: IProps) => {
         mx={"auto"}
       />
       <Card.Body gap={2} mt={2} fontSize={"sm"}>
-        <Card.Title>Living room Sofa</Card.Title>
+        <Card.Title>{title}</Card.Title>
         <Card.Description>
-          This sofa is perfect for modern tropical spaces, baroque inspired
-          spaces.
+          {description}
         </Card.Description>
         <Text textStyle="2xl" fontWeight="medium" letterSpacing="tight" mt="2">
-          $450
+          {price}$
         </Text>
       </Card.Body>
       <Card.Footer>
         <Button
           as={Link}
-          to={"/products/1"}
+          to={`/products/${documentId}`}
           bg={colorMode === "light" ? "#e6f3fd" : "#9f7aea"}
           color={colorMode !== "light" ? "#e6f3fd" : "#9f7aea"}
           variant="outline"

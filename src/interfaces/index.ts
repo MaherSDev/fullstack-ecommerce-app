@@ -12,6 +12,7 @@ export interface IUserData {
 
 export interface IProduct {
   id: string | undefined;
+  documentId: string | undefined;
   title: string;
   description: string;
   price: number;
