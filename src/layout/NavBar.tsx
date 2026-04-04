@@ -9,11 +9,13 @@ import {
   Portal,
   Link,
   HStack,
+  Heading,
 } from "@chakra-ui/react";
 import { useColorMode, useColorModeValue } from "../components/ui/color-mode";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { Link as RouterLink, type LinkProps } from "react-router-dom";
 import type { ForwardRefExoticComponent, RefAttributes } from "react";
+import CookieService from "@/services/CookieService";
 
 interface IProps {
   children:
@@ -23,33 +25,45 @@ interface IProps {
 
 export default function NavBar() {
   const { colorMode, toggleColorMode } = useColorMode();
-  const Links = ["Dashboard", "Products", "Team"];
+  const token = CookieService.get("jwt");
+  const Links = ["Products"];
 
   const NavLink = ({ children }: IProps) => (
     <Link
       as={RouterLink}
-      to={`${children}`.toLowerCase()}
-      px={2}
-      py={1}
+      to={`/${children}`.toLowerCase()}
+      fontWeight={"medium"}
       rounded={"md"}
+      outline="none"
       _hover={{
         textDecoration: "none",
-        bg: useColorModeValue("gray.200", "gray.700"),
+        color: useColorModeValue("blue.500", "blue.500"),
       }}
     >
       {children.toString()}
     </Link>
   );
 
+  const logoutHandler = () => {
+    CookieService.remove("jwt");
+    window.location.reload();
+  };
+
   return (
     <Box bg={useColorModeValue("gray.100", "gray.900")} px="4">
       <Flex h="16" align="center" justify="space-between">
-        <RouterLink to={"/"}>My App</RouterLink>
-        <HStack as={"nav"} gap={4} display={{ base: "none", md: "flex" }}>
-          {Links.map((link) => (
-            <NavLink key={link}>{link}</NavLink>
-          ))}
-        </HStack>
+        <Flex gap={6} align="flex-end" justify="start">
+          <RouterLink to={"/"}>
+            <Heading textAlign="center" size="xl" mx={2}>
+              My App
+            </Heading>
+          </RouterLink>
+          <HStack as={"nav"} gap={4} display={{ base: "none", md: "flex" }}>
+            {Links.map((link) => (
+              <NavLink key={link}>{link}</NavLink>
+            ))}
+          </HStack>
+        </Flex>
 
         <Flex align="center">
           <Stack direction="row" gap="6" align="center">
@@ -57,47 +71,56 @@ export default function NavBar() {
             <Button onClick={toggleColorMode} size="sm">
               {colorMode === "light" ? <FiMoon /> : <FiSun />}
             </Button>
-            <RouterLink to={"/login"}>Login</RouterLink>
+            {token ? (
+              <Menu.Root>
+                <Menu.Trigger asChild>
+                  <Button rounded="full" variant="ghost" minW="0">
+                    <Avatar.Root size="sm">
+                      <Avatar.Image src="https://avatars.dicebear.com/api/male/username.svg" />
+                      <Avatar.Fallback name="Username" />
+                    </Avatar.Root>
+                  </Button>
+                </Menu.Trigger>
+
+                <Portal>
+                  <Menu.Positioner>
+                    <Menu.Content>
+                      <Center py="4">
+                        <Avatar.Root size="sm">
+                          <Avatar.Image src="https://avatars.dicebear.com/api/male/username.svg" />
+                          <Avatar.Fallback name="Username" />
+                        </Avatar.Root>
+                      </Center>
+
+                      <Center pb="3">
+                        <Box fontSize="sm" fontWeight="medium">
+                          Username
+                        </Box>
+                      </Center>
+
+                      <Menu.Separator />
+
+                      <Menu.Item value="account">My Account</Menu.Item>
+
+                      <Menu.Item value="settings">Settings</Menu.Item>
+
+                      <Menu.Item
+                        onClick={logoutHandler}
+                        value="logout"
+                        color="red.400"
+                      >
+                        Logout
+                      </Menu.Item>
+                    </Menu.Content>
+                  </Menu.Positioner>
+                </Portal>
+              </Menu.Root>
+            ) : (
+              <RouterLink to={"/login"} replace>
+                Login
+              </RouterLink>
+            )}
             {/* ✅ NEW MENU API */}
-            <Menu.Root>
-              <Menu.Trigger asChild>
-                <Button rounded="full" variant="ghost" minW="0">
-                  <Avatar.Root size="sm">
-                    <Avatar.Image src="https://avatars.dicebear.com/api/male/username.svg" />
-                    <Avatar.Fallback name="Username" />
-                  </Avatar.Root>
-                </Button>
-              </Menu.Trigger>
-
-              <Portal>
-                <Menu.Positioner>
-                  <Menu.Content>
-                    <Center py="4">
-                      <Avatar.Root size="sm">
-                        <Avatar.Image src="https://avatars.dicebear.com/api/male/username.svg" />
-                        <Avatar.Fallback name="Username" />
-                      </Avatar.Root>
-                    </Center>
-
-                    <Center pb="3">
-                      <Box fontSize="sm" fontWeight="medium">
-                        Username
-                      </Box>
-                    </Center>
-
-                    <Menu.Separator />
-
-                    <Menu.Item value="account">My Account</Menu.Item>
-
-                    <Menu.Item value="settings">Settings</Menu.Item>
-
-                    <Menu.Item value="logout" color="red.400">
-                      Logout
-                    </Menu.Item>
-                  </Menu.Content>
-                </Menu.Positioner>
-              </Portal>
-            </Menu.Root>
           </Stack>
         </Flex>
       </Flex>

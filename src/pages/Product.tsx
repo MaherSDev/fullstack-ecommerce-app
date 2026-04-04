@@ -1,9 +1,9 @@
 import { Button, Card, Flex, Image, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import ProductSkeleton from "./ui/ProductSkeleton";
+import ProductSkeleton from "../components/ui/ProductSkeleton";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { BsArrowLeft } from "react-icons/bs";
-import { useColorMode } from "./ui/color-mode";
+import { useColorMode } from "../components/ui/color-mode";
 import axiosInstance from "@/api/axios.config";
 
 const ProductPage = () => {

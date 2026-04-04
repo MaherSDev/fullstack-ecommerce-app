@@ -1,3 +1,9 @@
+
+export interface LoginFormFields {
+  identifier: string;
+  password: string;
+  remember: boolean;
+};
 export interface IUserLogin {
   identifier: string;
   password: string;

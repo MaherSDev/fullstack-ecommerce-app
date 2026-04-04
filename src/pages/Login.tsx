@@ -10,6 +10,7 @@ import {
   Checkbox,
   InputGroup,
   IconButton,
+  Text,
 } from "@chakra-ui/react";
 import { useColorModeValue } from "../components/ui/color-mode";
 import { useForm, type SubmitHandler } from "react-hook-form";
@@ -17,24 +18,24 @@ import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { userLogin } from "../app/features/loginSlice";
 import { useAppDispatch } from "../hooks/index";
-
-type LoginFormValues = {
-  identifier: string;
-  password: string;
-  remember: boolean;
-};
+import { useLocation, useNavigate } from "react-router-dom";
+import type { LoginFormFields } from "@/interfaces";
+import { BsArrowLeft } from "react-icons/bs";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useAppDispatch();
 
+  const goBack = () => navigate("/");
   const {
     register,
     handleSubmit,
     setValue,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<LoginFormValues>({
+  } = useForm<LoginFormFields>({
     defaultValues: {
       identifier: "",
       password: "",
@@ -42,12 +43,13 @@ export default function LoginPage() {
     },
   });
 
-  const onSubmit: SubmitHandler<LoginFormValues> = async (data, e) => {
+  const onSubmit: SubmitHandler<LoginFormFields> = async (data, e) => {
     e?.preventDefault();
     const res = await dispatch(userLogin(data));
     if (userLogin.fulfilled.match(res)) {
       const { user, jwt } = res.payload;
-      console.log(user, jwt);
+      const from = location.state?.from || "/";
+      navigate(from, { replace: true });
     }
   };
 
@@ -58,9 +60,23 @@ export default function LoginPage() {
   return (
     <Flex h="full" align="center" justify="center" bg={bg}>
       <Box bg={cardBg} p={8} rounded="lg" shadow="lg" w="full" maxW="400px">
-        <Heading mb={6} textAlign="center" size="lg">
-          Sign in to your account
-        </Heading>
+        <Box as={"div"} bg={cardBg} mb={6}>
+          <Flex
+            alignItems={"center"}
+            maxW={"sm"}
+            my={5}
+            fontSize={"lg"}
+            color="blue.400"
+            cursor={"pointer"}
+            onClick={goBack}
+          >
+            <BsArrowLeft />
+            <Text ml={2}>Back to Home</Text>
+          </Flex>
+          <Heading textAlign="center" size="lg" mx={"auto"}>
+            Sign in to your account
+          </Heading>
+        </Box>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack gap={4}>
