@@ -16,6 +16,8 @@ import { FiMoon, FiSun } from "react-icons/fi";
 import { Link as RouterLink, type LinkProps } from "react-router-dom";
 import type { ForwardRefExoticComponent, RefAttributes } from "react";
 import CookieService from "@/services/CookieService";
+import { selectCart } from "@/app/features/cartSlice";
+import { useSelector } from "react-redux";
 
 interface IProps {
   children:
@@ -24,6 +26,7 @@ interface IProps {
 }
 
 export default function NavBar() {
+  const { cartProducts } = useSelector(selectCart);
   const { colorMode, toggleColorMode } = useColorMode();
   const token = CookieService.get("jwt");
   const Links = ["Products"];
@@ -71,6 +74,10 @@ export default function NavBar() {
             <Button onClick={toggleColorMode} size="sm">
               {colorMode === "light" ? <FiMoon /> : <FiSun />}
             </Button>
+            <Button onClick={() => {}} size="sm">
+              Cart({cartProducts.length})
+            </Button>
+
             {token ? (
               <Menu.Root>
                 <Menu.Trigger asChild>

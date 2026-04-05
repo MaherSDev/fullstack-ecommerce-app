@@ -5,8 +5,11 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { BsArrowLeft } from "react-icons/bs";
 import { useColorMode } from "../components/ui/color-mode";
 import axiosInstance from "@/api/axios.config";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, selectCart } from "@/app/features/cartSlice";
 
 const ProductPage = () => {
+  const dispatch = useDispatch();
   const { documentId } = useParams();
   const navigate = useNavigate();
   const { colorMode } = useColorMode();
@@ -25,6 +28,11 @@ const ProductPage = () => {
     queryFn: getProductData,
   });
   const goBack = () => navigate(-1);
+
+  const cartHandler = () => {
+    dispatch(addToCart(data.data))
+  };
+
 
   if (isLoading) return <ProductSkeleton />;
 
@@ -77,8 +85,7 @@ const ProductPage = () => {
         </Card.Body>
         <Card.Footer>
           <Button
-            as={Link}
-            // to={"/products/1"}
+          type="button"
             bg={colorMode === "light" ? "#e6f3fd" : "#9f7aea"}
             color={colorMode !== "light" ? "#e6f3fd" : "#9f7aea"}
             variant="outline"
@@ -92,6 +99,7 @@ const ProductPage = () => {
               color: colorMode == "light" ? "#e6f3fd" : "#9f7aea",
               border: "none",
             }}
+            onClick={cartHandler}
           >
             Add to cart
           </Button>
