@@ -1,4 +1,4 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
 
 interface IGlobalState {
@@ -17,9 +17,6 @@ const globalSlice = createSlice({
   name: "global",
   initialState,
   reducers: {
-    isOpenCartDrawer: (state) => {
-      state.isOpenCartDrawer = !state.isOpenCartDrawer;
-    },
     onOpenCartDrawerAction: (state) => {
       state.onOpenCartDrawer = true;
       state.isOpenCartDrawer = true;
@@ -32,7 +29,6 @@ const globalSlice = createSlice({
 });
 
 export const {
-  isOpenCartDrawer,
   onCloseCartDrawerAction,
   onOpenCartDrawerAction,
 } = globalSlice.actions;

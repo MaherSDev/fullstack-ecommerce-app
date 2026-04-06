@@ -8,6 +8,7 @@ import Products from "@/pages/ProductsPage";
 import ProductPage from "@/pages/Product";
 import LoginPage from "@/pages/Login";
 import ProtectedRoute from "@/layout/ProtectedRoutes";
+import { CartDrawer } from "./components/CartDrawer";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         </Route>
       </Routes>
 
+      <CartDrawer />
       <Toaster />
     </>
   );

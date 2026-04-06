@@ -17,7 +17,8 @@ import { Link as RouterLink, type LinkProps } from "react-router-dom";
 import type { ForwardRefExoticComponent, RefAttributes } from "react";
 import CookieService from "@/services/CookieService";
 import { selectCart } from "@/app/features/cartSlice";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { onOpenCartDrawerAction } from "@/app/features/globalSlice";
 
 interface IProps {
   children:
@@ -26,6 +27,7 @@ interface IProps {
 }
 
 export default function NavBar() {
+  const dispatch = useDispatch();
   const { cartProducts } = useSelector(selectCart);
   const { colorMode, toggleColorMode } = useColorMode();
   const token = CookieService.get("jwt");
@@ -52,6 +54,10 @@ export default function NavBar() {
     window.location.reload();
   };
 
+  const onOpen = () => {
+    dispatch(onOpenCartDrawerAction());
+  };
+
   return (
     <Box bg={useColorModeValue("gray.100", "gray.900")} px="4">
       <Flex h="16" align="center" justify="space-between">
@@ -74,7 +80,7 @@ export default function NavBar() {
             <Button onClick={toggleColorMode} size="sm">
               {colorMode === "light" ? <FiMoon /> : <FiSun />}
             </Button>
-            <Button onClick={() => {}} size="sm">
+            <Button onClick={onOpen} size="sm">
               Cart({cartProducts.length})
             </Button>
 

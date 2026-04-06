@@ -1,14 +1,24 @@
-import { Button, CloseButton, Drawer, Portal } from "@chakra-ui/react"
-
+import {
+  onCloseCartDrawerAction,
+  selectGlobal,
+} from "@/app/features/globalSlice";
+import { Button, CloseButton, Drawer, Portal } from "@chakra-ui/react";
+import { useDispatch, useSelector } from "react-redux";
 
 export const CartDrawer = () => {
+  const { isOpenCartDrawer } = useSelector(selectGlobal);
+  const dispatch = useDispatch();
+
+  const onClose = () => {
+    dispatch(onCloseCartDrawerAction());
+  };
+
   return (
-    <Drawer.Root>
-      <Drawer.Trigger asChild>
-        <Button variant="outline" size="sm">
-          Open Drawer
-        </Button>
-      </Drawer.Trigger>
+    <Drawer.Root
+      open={isOpenCartDrawer}
+      placement="end"
+      onInteractOutside={onClose}
+    >
       <Portal>
         <Drawer.Backdrop />
         <Drawer.Positioner>
@@ -16,22 +26,18 @@ export const CartDrawer = () => {
             <Drawer.Header>
               <Drawer.Title>Drawer Title</Drawer.Title>
             </Drawer.Header>
-            <Drawer.Body>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </p>
-            </Drawer.Body>
+            <Drawer.Body></Drawer.Body>
             <Drawer.Footer>
-              <Button variant="outline">Cancel</Button>
-              <Button>Save</Button>
+              <Button variant="outline" onClick={() => {}}>
+                Clear All
+              </Button>
             </Drawer.Footer>
             <Drawer.CloseTrigger asChild>
-              <CloseButton size="sm" />
+              <CloseButton size="sm" onClick={onClose} />
             </Drawer.CloseTrigger>
           </Drawer.Content>
         </Drawer.Positioner>
       </Portal>
     </Drawer.Root>
-  )
-}
+  );
+};
