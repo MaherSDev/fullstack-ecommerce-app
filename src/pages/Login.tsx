@@ -25,7 +25,7 @@ import { BsArrowLeft } from "react-icons/bs";
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 
   const goBack = () => navigate("/");

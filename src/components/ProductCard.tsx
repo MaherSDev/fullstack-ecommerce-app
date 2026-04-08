@@ -20,7 +20,7 @@ const ProductCard = ( product : IProduct) => {
       <Image
         src={`${import.meta.env.VITE_SERVER_URL}${thumbnail?.url}`}
         alt="Green double couch with wooden legs"
-        boxSize={"200px"}
+        boxSize={"150px"}
         borderRadius={"full"}
         objectFit={"cover"}
         mx={"auto"}

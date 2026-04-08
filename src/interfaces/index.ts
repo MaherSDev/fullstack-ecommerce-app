@@ -1,9 +1,8 @@
-
 export interface LoginFormFields {
   identifier: string;
   password: string;
   remember: boolean;
-};
+}
 export interface IUserLogin {
   identifier: string;
   password: string;
@@ -34,4 +33,17 @@ export interface IProduct {
       title: string;
     },
   ];
+}
+
+export interface ICartItem {
+  data: [
+    {
+      documentId: string | undefined;
+      product: IProduct;
+      quantity: number;
+      totalPrice: number;
+    },
+  ];
+  cartCost: number;
+  totalQuantity: number;
 }

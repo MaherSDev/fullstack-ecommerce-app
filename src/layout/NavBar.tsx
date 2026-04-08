@@ -81,7 +81,7 @@ export default function NavBar() {
               {colorMode === "light" ? <FiMoon /> : <FiSun />}
             </Button>
             <Button onClick={onOpen} size="sm">
-              Cart({cartProducts.length})
+              Cart({cartProducts.totalQuantity})
             </Button>
 
             {token ? (
