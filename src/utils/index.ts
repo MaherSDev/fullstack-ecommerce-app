@@ -35,7 +35,7 @@ export const shoppingCartQuantity = (
     };
   }
 
-	console.log(cartItems.cartCost)
+  console.log(cartItems.cartCost);
   toaster.create({
     title: "Added to your Cart",
     type: "success",
@@ -55,4 +55,26 @@ export const shoppingCartQuantity = (
     cartCost: (cartItems.cartCost += product.price),
     totalQuantity: (cartItems.totalQuantity += 1),
   };
+};
+
+export const removeFromCart = (product: IProduct, cartItems: ICartItem) => {
+  const productToRemove = cartItems.data.find(
+    (cartItem) => cartItem.documentId === product.documentId,
+  );
+  if (productToRemove) {
+    toaster.create({
+      title: `${productToRemove.product.title} - is Removed From Your Cart successfully`,
+      type: "success",
+      duration: 2000,
+      closable: true,
+    });
+    return {
+      data: cartItems.data.filter(
+        (cartItem) => cartItem.documentId !== product.documentId,
+      ),
+      cartCost: (cartItems.cartCost -= productToRemove.totalPrice),
+      totalQuantity: (cartItems.totalQuantity -= productToRemove.quantity),
+    };
+  }
+  return cartItems;
 };

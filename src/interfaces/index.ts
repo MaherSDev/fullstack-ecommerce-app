@@ -17,7 +17,7 @@ export interface IUserData {
 
 export interface IProduct {
   id: string | undefined;
-  documentId: string | undefined;
+  documentId: string;
   title: string;
   description: string;
   price: number;
@@ -38,7 +38,7 @@ export interface IProduct {
 export interface ICartItem {
   data: [
     {
-      documentId: string | undefined;
+      documentId: string;
       product: IProduct;
       quantity: number;
       totalPrice: number;

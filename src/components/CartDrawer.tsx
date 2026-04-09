@@ -1,4 +1,4 @@
-import { selectCart } from "@/app/features/cartSlice";
+import { removeAllItems, selectCart } from "@/app/features/cartSlice";
 import {
   onCloseCartDrawerAction,
   selectGlobal,
@@ -7,7 +7,6 @@ import {
   Button,
   CloseButton,
   Drawer,
-  Flex,
   FormatNumber,
   Portal,
   Stat,
@@ -18,16 +17,14 @@ import CartDrawerItem from "./CartDrawerItem";
 
 export const CartDrawer = () => {
   const { isOpenCartDrawer } = useSelector(selectGlobal);
-  const {
-    cartProducts: { data, cartCost },
-  } = useSelector(selectCart);
+  const { cartProducts } = useSelector(selectCart);
   const dispatch = useDispatch();
 
   const onClose = () => {
     dispatch(onCloseCartDrawerAction());
   };
 
-  console.log(cartCost);
+  console.log(cartProducts);
   return (
     <Drawer.Root
       open={isOpenCartDrawer}
@@ -43,29 +40,36 @@ export const CartDrawer = () => {
               <Drawer.Title>Drawer Title</Drawer.Title>
             </Drawer.Header>
             <Drawer.Body spaceY={1}>
-              {data.length &&
-                data.map((product) => (
-                  <CartDrawerItem
-                    key={product.documentId}
-                    product={product.product}
-                    quantity={product.quantity}
-                  />
-                ))}
+              {cartProducts.data.length
+                ? cartProducts.data.map((product) => (
+                    <CartDrawerItem
+                      key={product.documentId}
+                      product={product.product}
+                      quantity={product.quantity}
+                    />
+                  ))
+                : "Your cart is empty now"}
             </Drawer.Body>
-            <Drawer.Footer alignItems={"flex-end"} justifyContent="space-between">
+            <Drawer.Footer
+              alignItems={"flex-end"}
+              justifyContent="space-between"
+            >
               <Text textStyle="xl" fontWeight="medium" letterSpacing="tight">
                 <Stat.Root>
                   <Stat.Label>Cost</Stat.Label>
                   <Stat.ValueText>
                     <FormatNumber
-                      value={cartCost}
+                      value={cartProducts.cartCost}
                       style="currency"
                       currency="USD"
                     />
                   </Stat.ValueText>
                 </Stat.Root>
               </Text>
-              <Button variant="outline" onClick={() => {}}>
+              <Button
+                variant="outline"
+                onClick={() => dispatch(removeAllItems())}
+              >
                 Clear All
               </Button>
             </Drawer.Footer>
