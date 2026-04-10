@@ -14,7 +14,6 @@ const ProtectedRoute = () => {
   return (
     <>
       <Box as={"div"} h="calc(100dvh - 64px)">
-        <NavBar />
         <Outlet />
       </Box>
     </>

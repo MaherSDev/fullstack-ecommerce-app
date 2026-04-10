@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import HomePage from "@/pages";
-import Admin from "@/pages/Admin";
+import AdminLayout from "@/admin/AdminLayout";
 import { Toaster } from "@/components/ui/toaster";
 import AppLayout from "@/layout/AppLayout";
 import LoginLayout from "@/layout/LoginLayout";
@@ -9,6 +9,8 @@ import ProductPage from "@/pages/Product";
 import LoginPage from "@/pages/Login";
 import ProtectedRoute from "@/layout/ProtectedRoutes";
 import { CartDrawer } from "./components/CartDrawer";
+import Dashboard from "./admin/pages/Dashboard";
+import ManageProducts from "./admin/pages/ManageProducts";
 
 function App() {
   return (
@@ -23,7 +25,10 @@ function App() {
 
         {/** Routes Require Login ( Access Token) */}
         <Route path="/admin" element={<ProtectedRoute />}>
-          <Route index element={<Admin />} />
+          <Route element={<AdminLayout />} >
+            <Route index element={<Dashboard />} />
+            <Route path="products" element={<ManageProducts />} />
+          </Route>
         </Route>
 
         {/** Handle Login Route for Login/Logout */}
