@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import HomePage from "@/pages";
-import AdminLayout from "@/admin/AdminLayout";
+import AdminLayout from "@/admin/Layout/AdminLayout";
 import { Toaster } from "@/components/ui/toaster";
 import AppLayout from "@/layout/AppLayout";
 import LoginLayout from "@/layout/LoginLayout";
@@ -10,7 +10,8 @@ import LoginPage from "@/pages/Login";
 import ProtectedRoute from "@/layout/ProtectedRoutes";
 import { CartDrawer } from "./components/CartDrawer";
 import Dashboard from "./admin/pages/Dashboard";
-import ManageProducts from "./admin/pages/ManageProducts";
+import type { INavLinks } from "./interfaces";
+import { SidebarContent } from "./admin/common/constants";
 
 function App() {
   return (
@@ -25,9 +26,12 @@ function App() {
 
         {/** Routes Require Login ( Access Token) */}
         <Route path="/admin" element={<ProtectedRoute />}>
-          <Route element={<AdminLayout />} >
+          <Route element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
-            <Route path="products" element={<ManageProducts />} />
+            {SidebarContent.map(({ path, page }: INavLinks, key) => (
+              <Route path={path} element={page} key={key} />
+            ))}
+            {/* <Route path="products" element={<ManageProducts />} /> */}
           </Route>
         </Route>
 

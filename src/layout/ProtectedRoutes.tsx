@@ -1,6 +1,5 @@
 import { Box } from "@chakra-ui/react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import NavBar from "./NavBar";
 import CookieService from "@/services/CookieService";
 
 const ProtectedRoute = () => {

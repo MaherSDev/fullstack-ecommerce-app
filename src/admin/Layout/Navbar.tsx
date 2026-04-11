@@ -11,7 +11,10 @@ import {
   HStack,
   Heading,
 } from "@chakra-ui/react";
-import { useColorMode, useColorModeValue } from "../components/ui/color-mode";
+import {
+  useColorMode,
+  useColorModeValue,
+} from "../../components/ui/color-mode";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { Link as RouterLink, type LinkProps } from "react-router-dom";
 import type { ForwardRefExoticComponent, RefAttributes } from "react";
@@ -133,7 +136,6 @@ export default function Navbar() {
                 Login
               </RouterLink>
             )}
-            {/* ✅ NEW MENU API */}
           </Stack>
         </Flex>
       </Flex>

@@ -1,3 +1,12 @@
+import type { ReactNode } from "react";
+
+export interface INavLinks {
+  label: string;
+  path: string;
+  icon?: ReactNode;
+  page?: ReactNode;
+}
+
 export interface LoginFormFields {
   identifier: string;
   password: string;
