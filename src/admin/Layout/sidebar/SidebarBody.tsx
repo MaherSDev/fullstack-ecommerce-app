@@ -25,7 +25,7 @@ const SidebarBody = () => {
           <IconButton aria-label={label} variant={"ghost"}>
             {icon}
           </IconButton>
-          <Text textStyle="lg" fontWeight="medium">
+          <Text textStyle="xl" fontWeight="medium">
             {label}
           </Text>
         </Link>

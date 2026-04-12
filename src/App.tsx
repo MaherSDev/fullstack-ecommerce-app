@@ -31,7 +31,6 @@ function App() {
             {SidebarContent.map(({ path, page }: INavLinks, key) => (
               <Route path={path} element={page} key={key} />
             ))}
-            {/* <Route path="products" element={<ManageProducts />} /> */}
           </Route>
         </Route>
 
