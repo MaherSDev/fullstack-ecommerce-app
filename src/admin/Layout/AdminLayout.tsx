@@ -21,7 +21,7 @@ const AdminLayout = ({}: IProps) => {
         >
           <AdminNavbar />
         </Box>
-        <Box h={"calc(100% - 80px)"}>
+        <Box h={"calc(100% - 80px)"} p={4}>
           <Outlet />
         </Box>
       </Box>

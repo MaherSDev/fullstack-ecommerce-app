@@ -6,7 +6,7 @@ const SidebarHeader = ({}: IProps) => {
   return (
     <Box>
       <Center w={"ful"} inline paddingLeft={5} h={"60px"}>
-        <Heading as="h1" size={"3xl"}>
+        <Heading as="h1" size={"2xl"}>
           Logo
         </Heading>
       </Center>

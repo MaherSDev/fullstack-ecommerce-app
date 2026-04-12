@@ -1,11 +1,15 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
+import ProductsTable from "../common/Components/ProductsTable";
 
 interface IProps {}
 
 const ManageProducts = ({}: IProps) => {
   return (
     <Box>
-      <h1>Products</h1>
+      <Heading as="h1" size={"xl"} my={4}>
+        Products Data
+      </Heading>
+      <ProductsTable />
     </Box>
   );
 };
