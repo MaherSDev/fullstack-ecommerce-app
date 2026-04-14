@@ -4,7 +4,7 @@ import cartSlice from "./features/cartSlice";
 import globalSlice from "./features/globalSlice";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import { apiSlice } from "./services/apiSlice";
+import { ProductsApiSlice } from "./services/products";
 
 const resolvedStorage =
   (storage as unknown as { default?: typeof storage }).default ?? storage;
@@ -20,7 +20,7 @@ export const store = configureStore({
     cart: persistedCart,
     login: loginSlice,
     global: globalSlice,
-		[apiSlice.reducerPath]: apiSlice.reducer,
+    [ProductsApiSlice.reducerPath]: ProductsApiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -34,7 +34,7 @@ export const store = configureStore({
           "persist/PURGE",
         ],
       },
-    }).concat([apiSlice.middleware]),
+    }).concat([ProductsApiSlice.middleware]),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

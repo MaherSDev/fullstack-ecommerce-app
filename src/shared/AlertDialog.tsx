@@ -1,13 +1,24 @@
 import { Button, CloseButton, Dialog, Portal, Text } from "@chakra-ui/react";
-import { BsTrash } from "react-icons/bs";
 import { BiUndo } from "react-icons/bi";
 
 interface IProps {
   isOpen: boolean;
   onClose: () => void;
+  title: string;
+  description: string;
+  okText: {
+    icon?: React.ReactNode;
+    text: string;
+  };
 }
 
-const AlertDialog = ({ isOpen, onClose }: IProps) => {
+const AlertDialog = ({
+  isOpen,
+  onClose,
+  description,
+  okText,
+  title,
+}: IProps) => {
   return (
     <Dialog.Root
       role="alertdialog"
@@ -20,13 +31,10 @@ const AlertDialog = ({ isOpen, onClose }: IProps) => {
         <Dialog.Positioner bg={"black"} opacity={0.7}>
           <Dialog.Content>
             <Dialog.Header>
-              <Dialog.Title>Are you sure to remove this product?</Dialog.Title>
+              <Dialog.Title>{title}</Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>
-              <Text fontWeight={"normal"}>
-                This action cannot be undone. This will permanently remove the
-                product.
-              </Text>
+              <Text fontWeight={"normal"}>{description}</Text>
             </Dialog.Body>
             <Dialog.Footer>
               <Dialog.ActionTrigger asChild>
@@ -41,8 +49,8 @@ const AlertDialog = ({ isOpen, onClose }: IProps) => {
                 mr={3}
                 onClick={() => {}}
               >
-                <BsTrash size={17} />
-                Delete
+                {okText?.icon}
+                {okText.text}
               </Button>
             </Dialog.Footer>
             <Dialog.CloseTrigger asChild>

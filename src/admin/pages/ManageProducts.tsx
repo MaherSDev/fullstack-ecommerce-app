@@ -1,6 +1,7 @@
 import { Heading, useDisclosure } from "@chakra-ui/react";
 import ProductsTable from "../common/Components/ProductsTable";
 import AlertDialog from "@/shared/AlertDialog";
+import { BsTrash } from "react-icons/bs";
 
 interface IProps {}
 
@@ -13,7 +14,15 @@ const ManageProducts = ({}: IProps) => {
         Products Data
       </Heading>
       <ProductsTable onOpen={onOpen} />
-      <AlertDialog isOpen={open} onClose={onClose} />
+      <AlertDialog
+        isOpen={open}
+        onClose={onClose}
+        description={
+          "This action cannot be undone. This will permanently remove the product."
+        }
+        title={"Are you sure to remove this product?"}
+        okText={{ icon: <BsTrash size={17} />, text: "Delete" }}
+      />
     </>
   );
 };

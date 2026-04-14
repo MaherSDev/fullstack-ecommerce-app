@@ -1,4 +1,4 @@
-import { useGetDashboardProductsQuery } from "@/app/services/apiSlice";
+import { useGetDashboardProductsQuery } from "@/app/services/products";
 import { AiOutlineEye } from "react-icons/ai";
 import type { IProduct } from "@/interfaces";
 import {
@@ -23,7 +23,7 @@ interface IProps {
 const ProductsTable = ({ onOpen }: IProps) => {
   const [selection, setSelection] = useState<string[]>([]);
   const { isLoading, data, error } = useGetDashboardProductsQuery({ page: 1 });
-
+  
   const hasSelection = selection.length > 0;
   const indeterminate = hasSelection && selection.length < data.data.length;
 

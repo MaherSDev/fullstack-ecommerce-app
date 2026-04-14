@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export const apiSlice = createApi({
+export const ProductsApiSlice = createApi({
   reducerPath: "api",
   tagTypes: ["Products"],
   refetchOnReconnect: true,
@@ -11,7 +11,7 @@ export const apiSlice = createApi({
       query: (arg) => {
         const { page = 1 } = arg;
         return {
-          url: `products`,
+          url: `products?pagination[page]=${page}&pagination[pageSize]=10`,
           params: {
             "populate[0]": "thumbnail",
             "populate[1]": "categories",
@@ -19,7 +19,18 @@ export const apiSlice = createApi({
         };
       },
     }),
+    deleteDashboardProducts: build.mutation({
+      query: (id) => {
+        return {
+          url: `products/${id}`,
+          method: "DELETE",
+        };
+      },
+    }),
   }),
 });
 
-export const { useGetDashboardProductsQuery } = apiSlice;
+export const {
+  useGetDashboardProductsQuery,
+  useDeleteDashboardProductsMutation,
+} = ProductsApiSlice;
