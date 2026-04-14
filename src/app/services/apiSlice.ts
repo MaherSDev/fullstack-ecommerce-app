@@ -9,9 +9,10 @@ export const apiSlice = createApi({
       query: (arg) => {
         const { page = 1 } = arg;
         return {
-          url: `products?pagination[page]=${page}&pagination[pageSize]=7`,
+          url: `products`,
           params: {
-            populate: ["categories"],
+            "populate[0]": "thumbnail",
+            "populate[1]": "categories",
           },
         };
       },

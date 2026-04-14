@@ -35,6 +35,7 @@ export interface IProduct {
     id: string | undefined;
     url: string;
     name: string;
+    alternativeText: string;
   };
   categories: [
     {

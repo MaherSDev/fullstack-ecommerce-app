@@ -1,7 +1,10 @@
+import { useGetDashboardProductsQuery } from "@/app/services/apiSlice";
+import type { IProduct } from "@/interfaces";
 import {
   ActionBar,
   Button,
   Checkbox,
+  Image,
   Kbd,
   Portal,
   Table,
@@ -10,36 +13,31 @@ import { useState } from "react";
 
 interface IProps {}
 
-const items = [
-  { id: 1, name: "Laptop", category: "Electronics", price: 999.99 },
-  { id: 2, name: "Coffee Maker", category: "Home Appliances", price: 49.99 },
-  { id: 3, name: "Desk Chair", category: "Furniture", price: 150.0 },
-  { id: 4, name: "Smartphone", category: "Electronics", price: 799.99 },
-  { id: 5, name: "Headphones", category: "Accessories", price: 199.99 },
-];
-
 const ProductsTable = ({}: IProps) => {
   const [selection, setSelection] = useState<string[]>([]);
+  const { isLoading, data, error } = useGetDashboardProductsQuery({ page: 1 });
+
+  console.log({ data, error });
 
   const hasSelection = selection.length > 0;
-  const indeterminate = hasSelection && selection.length < items.length;
+  const indeterminate = hasSelection && selection.length < data.data.length;
 
-  const rows = items.map((item) => (
+  const rows = data?.data.map((product: IProduct) => (
     <Table.Row
-      key={item.name}
-      data-selected={selection.includes(item.name) ? "" : undefined}
+      key={product.id}
+      data-selected={selection.includes(product.title) ? "" : undefined}
     >
       <Table.Cell>
         <Checkbox.Root
           size="sm"
           top="0.5"
           aria-label="Select row"
-          checked={selection.includes(item.name)}
+          checked={selection.includes(product.title)}
           onCheckedChange={(changes) => {
             setSelection((prev) =>
               changes.checked
-                ? [...prev, item.name]
-                : selection.filter((name) => name !== item.name),
+                ? [...prev, product.title]
+                : selection.filter((name) => name !== product.title),
             );
           }}
         >
@@ -47,11 +45,27 @@ const ProductsTable = ({}: IProps) => {
           <Checkbox.Control />
         </Checkbox.Root>
       </Table.Cell>
-      <Table.Cell>{item.name}</Table.Cell>
-      <Table.Cell>{item.category}</Table.Cell>
-      <Table.Cell>${item.price}</Table.Cell>
+      <Table.Cell>
+        <Image
+          src={`${import.meta.env.VITE_SERVER_URL}${product.thumbnail?.url}`}
+          alt={product.thumbnail?.alternativeText}
+          boxSize={"50px"}
+          borderRadius={"full"}
+          objectFit={"cover"}
+          />
+      </Table.Cell>
+      <Table.Cell>{product.title}</Table.Cell>
+      <Table.Cell>
+        {product.categories.map((cat) => (
+          <span key={cat.id}>{cat.title}</span>
+        ))}
+      </Table.Cell>
+      <Table.Cell>${product.price}</Table.Cell>
+      <Table.Cell>{product.stock}</Table.Cell>
     </Table.Row>
   ));
+
+  if (error) return "No Data Found";
 
   return (
     <>
@@ -66,7 +80,9 @@ const ProductsTable = ({}: IProps) => {
                 checked={indeterminate ? "indeterminate" : selection.length > 0}
                 onCheckedChange={(changes) => {
                   setSelection(
-                    changes.checked ? items.map((item) => item.name) : [],
+                    changes.checked
+                      ? data.data.map((product: IProduct) => product.title)
+                      : [],
                   );
                 }}
               >
@@ -74,9 +90,12 @@ const ProductsTable = ({}: IProps) => {
                 <Checkbox.Control />
               </Checkbox.Root>
             </Table.ColumnHeader>
-            <Table.ColumnHeader>Product</Table.ColumnHeader>
+            <Table.ColumnHeader>image</Table.ColumnHeader>
+            <Table.ColumnHeader>Title</Table.ColumnHeader>
             <Table.ColumnHeader>Category</Table.ColumnHeader>
             <Table.ColumnHeader>Price</Table.ColumnHeader>
+            <Table.ColumnHeader>Stock</Table.ColumnHeader>
+            <Table.ColumnHeader>Action</Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
         <Table.Body>{rows}</Table.Body>
