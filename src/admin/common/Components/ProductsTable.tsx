@@ -1,4 +1,5 @@
 import { useGetDashboardProductsQuery } from "@/app/services/apiSlice";
+import { AiOutlineEye } from "react-icons/ai";
 import type { IProduct } from "@/interfaces";
 import {
   ActionBar,
@@ -10,6 +11,9 @@ import {
   Table,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { BsTrash } from "react-icons/bs";
+import { FiEdit } from "react-icons/fi";
 
 interface IProps {}
 
@@ -49,10 +53,10 @@ const ProductsTable = ({}: IProps) => {
         <Image
           src={`${import.meta.env.VITE_SERVER_URL}${product.thumbnail?.url}`}
           alt={product.thumbnail?.alternativeText}
-          boxSize={"50px"}
+          boxSize={"40px"}
           borderRadius={"full"}
           objectFit={"cover"}
-          />
+        />
       </Table.Cell>
       <Table.Cell>{product.title}</Table.Cell>
       <Table.Cell>
@@ -62,6 +66,24 @@ const ProductsTable = ({}: IProps) => {
       </Table.Cell>
       <Table.Cell>${product.price}</Table.Cell>
       <Table.Cell>{product.stock}</Table.Cell>
+      <Table.Cell>
+        <Button
+          as={Link}
+          top={`/products/${product.documentId}`}
+          variant="solid"
+          colorScheme={"purple"}
+          mr={3}
+          onClick={() => {}}
+        >
+          <AiOutlineEye size={17} />
+        </Button>
+        <Button variant="solid" colorScheme={"red"} mr={3} onClick={() => {}}>
+          <BsTrash size={17} />
+        </Button>
+        <Button variant="solid" colorScheme={"blue"} onClick={() => {}}>
+          <FiEdit size={17} />
+        </Button>
+      </Table.Cell>
     </Table.Row>
   ));
 
