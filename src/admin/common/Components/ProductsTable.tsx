@@ -5,6 +5,7 @@ import {
   ActionBar,
   Button,
   Checkbox,
+  IconButton,
   Image,
   Kbd,
   Portal,
@@ -15,13 +16,13 @@ import { Link } from "react-router-dom";
 import { BsTrash } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
 
-interface IProps {}
+interface IProps {
+  onOpen: () => void;
+}
 
-const ProductsTable = ({}: IProps) => {
+const ProductsTable = ({ onOpen }: IProps) => {
   const [selection, setSelection] = useState<string[]>([]);
   const { isLoading, data, error } = useGetDashboardProductsQuery({ page: 1 });
-
-  console.log({ data, error });
 
   const hasSelection = selection.length > 0;
   const indeterminate = hasSelection && selection.length < data.data.length;
@@ -67,22 +68,27 @@ const ProductsTable = ({}: IProps) => {
       <Table.Cell>${product.price}</Table.Cell>
       <Table.Cell>{product.stock}</Table.Cell>
       <Table.Cell>
-        <Button
+        <IconButton
           as={Link}
-          top={`/products/${product.documentId}`}
+          to={`/products/${product.documentId}`}
           variant="solid"
-          colorScheme={"purple"}
+          colorPalette={"purple"}
           mr={3}
           onClick={() => {}}
         >
           <AiOutlineEye size={17} />
-        </Button>
-        <Button variant="solid" colorScheme={"red"} mr={3} onClick={() => {}}>
+        </IconButton>
+        <IconButton
+          variant="solid"
+          colorPalette={"red"}
+          mr={3}
+          onClick={onOpen}
+        >
           <BsTrash size={17} />
-        </Button>
-        <Button variant="solid" colorScheme={"blue"} onClick={() => {}}>
+        </IconButton>
+        <IconButton variant="solid" colorPalette={"blue"} onClick={() => {}}>
           <FiEdit size={17} />
-        </Button>
+        </IconButton>
       </Table.Cell>
     </Table.Row>
   ));
