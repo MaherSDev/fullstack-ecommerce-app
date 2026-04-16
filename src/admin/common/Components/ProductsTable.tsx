@@ -3,6 +3,9 @@ import {
   useDeleteDashboardProductsMutation,
 } from "@/app/services/products";
 import { AiOutlineEye } from "react-icons/ai";
+import { MdOutlineDownloadDone } from "react-icons/md";
+import { BsTrash } from "react-icons/bs";
+import { FiEdit } from "react-icons/fi";
 import type { IProduct } from "@/interfaces";
 import {
   ActionBar,
@@ -17,16 +20,19 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BsTrash } from "react-icons/bs";
-import { FiEdit } from "react-icons/fi";
 import AlertDialog from "@/shared/AlertDialog";
-import type { Dialog } from "node_modules/@chakra-ui/react/dist/types/components/dialog/namespace";
+import ModalDialog from "@/shared/ModalDialog";
 
 const ProductsTable = () => {
   const [selection, setSelection] = useState<string[]>([]);
   const [clickedProductId, setClickedProductId] = useState<string>("");
   const { open, onOpen, onClose } = useDisclosure();
-  const [onDeleteHandler, { isLoading: loading, isSuccess }] =
+  const {
+    open: openModal,
+    onOpen: onOpenModal,
+    onClose: onCloseModal,
+  } = useDisclosure();
+  const [onDeleteHandler, { isLoading: isDeleting, isSuccess }] =
     useDeleteDashboardProductsMutation();
   const { isLoading, data, error } = useGetDashboardProductsQuery({ page: 1 });
 
@@ -101,7 +107,14 @@ const ProductsTable = () => {
         >
           <BsTrash size={17} />
         </IconButton>
-        <IconButton variant="solid" colorPalette={"blue"} onClick={() => {}}>
+        <IconButton
+          variant="solid"
+          colorPalette={"blue"}
+          onClick={() => {
+            setClickedProductId(product.documentId);
+            onOpenModal();
+          }}
+        >
           <FiEdit size={17} />
         </IconButton>
       </Table.Cell>
@@ -171,8 +184,18 @@ const ProductsTable = () => {
         title={"Are you sure to remove this product?"}
         okText={{ icon: <BsTrash size={17} />, text: "Delete" }}
         onDeleteHandler={() => onDeleteHandler(clickedProductId)}
-        isLoading={loading}
+        isLoading={isDeleting}
       />
+      <ModalDialog
+        isOpen={openModal}
+        onClose={onCloseModal}
+        title={"Update product"}
+        okText={{ icon: <MdOutlineDownloadDone size={17} />, text: "Save" }}
+        onDeleteHandler={() => onDeleteHandler(clickedProductId)}
+        isLoading={isDeleting}
+      >
+        <p>Children</p>
+      </ModalDialog>
     </>
   );
 };
