@@ -1,3 +1,4 @@
+import CookieService from "@/services/CookieService";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const ProductsApiSlice = createApi({
@@ -18,14 +19,19 @@ export const ProductsApiSlice = createApi({
           },
         };
       },
+      providesTags: ["Products"],
     }),
     deleteDashboardProducts: build.mutation({
-      query: (id) => {
+      query: (documentId) => {
         return {
-          url: `products/${id}`,
+          url: `products/${documentId}`,
           method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${CookieService.get("jwt")}`,
+          },
         };
       },
+      invalidatesTags: ["Products"],
     }),
   }),
 });

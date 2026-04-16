@@ -3,21 +3,25 @@ import { BiUndo } from "react-icons/bi";
 
 interface IProps {
   isOpen: boolean;
-  onClose: () => void;
+  isLoading: boolean;
   title: string;
   description: string;
   okText: {
     icon?: React.ReactNode;
     text: string;
   };
+  onClose: () => void;
+  onDeleteHandler: () => void;
 }
 
 const AlertDialog = ({
   isOpen,
-  onClose,
+  isLoading,
   description,
   okText,
   title,
+  onClose,
+  onDeleteHandler,
 }: IProps) => {
   return (
     <Dialog.Root
@@ -27,8 +31,9 @@ const AlertDialog = ({
       onOpenChange={onClose}
       onInteractOutside={onClose}
     >
+      <Dialog.Backdrop />
       <Portal>
-        <Dialog.Positioner bg={"black"} opacity={0.7}>
+        <Dialog.Positioner>
           <Dialog.Content>
             <Dialog.Header>
               <Dialog.Title>{title}</Dialog.Title>
@@ -47,7 +52,8 @@ const AlertDialog = ({
                 variant="solid"
                 colorPalette={"red"}
                 mr={3}
-                onClick={() => {}}
+                loading={isLoading}
+                onClick={onDeleteHandler}
               >
                 {okText?.icon}
                 {okText.text}

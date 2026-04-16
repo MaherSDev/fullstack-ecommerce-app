@@ -1,4 +1,7 @@
-import { useGetDashboardProductsQuery } from "@/app/services/products";
+import {
+  useGetDashboardProductsQuery,
+  useDeleteDashboardProductsMutation,
+} from "@/app/services/products";
 import { AiOutlineEye } from "react-icons/ai";
 import type { IProduct } from "@/interfaces";
 import {
@@ -10,20 +13,29 @@ import {
   Kbd,
   Portal,
   Table,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BsTrash } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
+import AlertDialog from "@/shared/AlertDialog";
+import type { Dialog } from "node_modules/@chakra-ui/react/dist/types/components/dialog/namespace";
 
-interface IProps {
-  onOpen: () => void;
-}
-
-const ProductsTable = ({ onOpen }: IProps) => {
+const ProductsTable = () => {
   const [selection, setSelection] = useState<string[]>([]);
+  const [clickedProductId, setClickedProductId] = useState<string>("");
+  const { open, onOpen, onClose } = useDisclosure();
+  const [onDeleteHandler, { isLoading: loading, isSuccess }] =
+    useDeleteDashboardProductsMutation();
   const { isLoading, data, error } = useGetDashboardProductsQuery({ page: 1 });
-  
+
+  useEffect(() => {
+    if (isSuccess) {
+      onClose();
+    }
+  }, [isSuccess]);
+
   const hasSelection = selection.length > 0;
   const indeterminate = hasSelection && selection.length < data.data.length;
 
@@ -82,7 +94,10 @@ const ProductsTable = ({ onOpen }: IProps) => {
           variant="solid"
           colorPalette={"red"}
           mr={3}
-          onClick={onOpen}
+          onClick={() => {
+            setClickedProductId(product.documentId);
+            onOpen();
+          }}
         >
           <BsTrash size={17} />
         </IconButton>
@@ -147,6 +162,17 @@ const ProductsTable = ({ onOpen }: IProps) => {
           </ActionBar.Positioner>
         </Portal>
       </ActionBar.Root>
+      <AlertDialog
+        isOpen={open}
+        onClose={onClose}
+        description={
+          "This action cannot be undone. This will permanently remove the product."
+        }
+        title={"Are you sure to remove this product?"}
+        okText={{ icon: <BsTrash size={17} />, text: "Delete" }}
+        onDeleteHandler={() => onDeleteHandler(clickedProductId)}
+        isLoading={loading}
+      />
     </>
   );
 };
