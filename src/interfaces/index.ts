@@ -44,6 +44,24 @@ export interface IProduct {
     },
   ];
 }
+export interface IProductForm {
+  title: string;
+  description: string;
+  price: number;
+  stock: number;
+  thumbnail: {
+    id: string | undefined;
+    url: string;
+    name: string;
+    alternativeText: string;
+  } | null;
+  categories: [
+    {
+      id: string | undefined;
+      title: string;
+    },
+  ] | null;
+}
 
 export interface ICartItem {
   data: [

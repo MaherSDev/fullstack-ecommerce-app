@@ -12,7 +12,7 @@ interface IProps {
     text: string;
   };
   onClose: () => void;
-  onDeleteHandler: () => void;
+  onSave: () => void;
 }
 
 const ModalDialog = ({
@@ -20,8 +20,8 @@ const ModalDialog = ({
   isLoading,
   okText,
   title,
+  onSave,
   onClose,
-  onDeleteHandler,
   children
 }: IProps) => {
   return (
@@ -30,6 +30,7 @@ const ModalDialog = ({
       open={isOpen}
       onOpenChange={onClose}
       onInteractOutside={onClose}
+      size={"xl"}
     >
       <Dialog.Backdrop />
       <Portal>
@@ -53,7 +54,7 @@ const ModalDialog = ({
                 colorPalette={"blue"}
                 mr={3}
                 loading={isLoading}
-                onClick={onDeleteHandler}
+                onClick={onSave}
               >
                 {okText?.icon}
                 {okText.text}
