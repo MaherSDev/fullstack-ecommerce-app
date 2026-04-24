@@ -1,6 +1,7 @@
 import {
   useGetDashboardProductsQuery,
   useDeleteDashboardProductsMutation,
+  useUpdateDashboardProductsMutation,
 } from "@/app/services/products";
 import { AiOutlineEye } from "react-icons/ai";
 import { MdOutlineDownloadDone } from "react-icons/md";
@@ -35,6 +36,8 @@ import ModalDialog from "@/shared/ModalDialog";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import { LuDollarSign, LuUpload } from "react-icons/lu";
+import CookieService from "@/services/CookieService";
+import axiosInstance from "@/api/axios.config";
 
 interface IFile {
   lastModified: number;
@@ -43,8 +46,13 @@ interface IFile {
   type: string;
 }
 
+interface IModalBody {
+  body: "update" | "delete" | "create" | "";
+}
+
 const ProductsTable = () => {
   const productDefaultValues = {
+    documentId: "",
     title: "",
     description: "",
     price: 0,
@@ -60,12 +68,14 @@ const ProductsTable = () => {
   };
 
   const border = useColorModeValue("gray.200", "gray.500");
+  const [modalBody, setModalBody] = useState<IModalBody>({ body: "create" });
   const [selection, setSelection] = useState<string[]>([]);
   const [clickedProductId, setClickedProductId] = useState<string>("");
   const [file, setFile] = useState<IFile>(thumbnailDefaultValues);
   const [productThumbnail, setProductThumbnail] = useState<
     IProductForm["thumbnail"]
   >({
+    documentId: "",
     id: "",
     url: "",
     name: "",
@@ -77,15 +87,24 @@ const ProductsTable = () => {
     onOpen: onOpenModal,
     onClose: onCloseModal,
   } = useDisclosure();
-  const [onDeleteHandler, { isLoading: isDeleting, isSuccess }] =
-    useDeleteDashboardProductsMutation();
+  const [
+    onDeleteHandler,
+    { isLoading: isDeleting, isSuccess: isSuccessDeleting },
+  ] = useDeleteDashboardProductsMutation();
+  const [
+    onUpdateHandler,
+    { isLoading: isUpdating, isSuccess: isSuccessUpdating },
+  ] = useUpdateDashboardProductsMutation();
   const { isLoading, data, error } = useGetDashboardProductsQuery({ page: 1 });
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccessDeleting) {
       onClose();
     }
-  }, [isSuccess, onClose]);
+    if (isSuccessUpdating) {
+      onCloseModal();
+    }
+  }, [isSuccessDeleting, isSuccessUpdating, onCloseModal, onClose]);
 
   const {
     register,
@@ -99,9 +118,75 @@ const ProductsTable = () => {
     defaultValues: productDefaultValues,
   });
 
-  const onSubmit: SubmitHandler<IProductForm> = async (data, e) => {
+
+  const onSubmitUpdating: SubmitHandler<IProductForm> = async (data, e) => {
     e?.preventDefault();
-    console.log(data);
+
+    const updatedData = {
+      data: {
+        title: data.title,
+        description: data.description,
+        price: data.price,
+        stock: data.stock,
+        categories: data.categories?.map((c) => c.id) || [],
+        thumbnail: data.thumbnail,
+      },
+    };
+
+    if (file.size) {
+      const formData = new FormData();
+      formData.append("files", file);
+
+      const { data: fileData } = await axiosInstance.post("upload", formData, {
+        headers: {
+          Authorization: `Bearer ${CookieService.get("jwt")}`,
+        },
+      });
+
+      updatedData.data.thumbnail = fileData[0].id;
+    }
+    const { data: newData } = await onUpdateHandler({
+      documentId: data.documentId,
+      body: updatedData,
+    });
+    if (newData.data) {
+      setFile(thumbnailDefaultValues);
+    }
+  };
+
+  const onSubmitCreating: SubmitHandler<IProductForm> = async (data, e) => {
+    e?.preventDefault();
+
+    const updatedData = {
+      data: {
+        title: data.title,
+        description: data.description,
+        price: data.price,
+        stock: data.stock,
+        categories: data.categories?.map((c) => c.id) || [],
+        thumbnail: data.thumbnail,
+      },
+    };
+
+    if (file.size) {
+      const formData = new FormData();
+      formData.append("files", file);
+
+      const { data: fileData } = await axiosInstance.post("upload", formData, {
+        headers: {
+          Authorization: `Bearer ${CookieService.get("jwt")}`,
+        },
+      });
+
+      updatedData.data.thumbnail = fileData[0].id;
+    }
+    const { data: newData } = await onUpdateHandler({
+      documentId: data.documentId,
+      body: updatedData,
+    });
+    if (newData.data) {
+      setFile(thumbnailDefaultValues);
+    }
   };
 
   const hasSelection = selection.length > 0;
@@ -173,6 +258,7 @@ const ProductsTable = () => {
           variant="solid"
           colorPalette={"blue"}
           onClick={() => {
+            setModalBody({ body: "update" });
             reset(product);
             setProductThumbnail(getValues("thumbnail"));
             onOpenModal();
@@ -192,9 +278,19 @@ const ProductsTable = () => {
     setValue(name, value);
   };
 
+  const onCancelHandler = () => {
+    setFile(thumbnailDefaultValues);
+  }
+
   const changeThumbnailHandler = () => {
     setFile(thumbnailDefaultValues);
-    setProductThumbnail({ id: "", url: "", name: "", alternativeText: "" });
+    setProductThumbnail({
+      documentId: "",
+      id: "",
+      url: "",
+      name: "",
+      alternativeText: "",
+    });
   };
 
   const cancelThumbnailHandler = () => {
@@ -270,11 +366,14 @@ const ProductsTable = () => {
       />
       <ModalDialog
         isOpen={openModal}
-        onClose={onCloseModal}
+        isLoading={isUpdating}
         title={"Update product"}
         okText={{ icon: <MdOutlineDownloadDone size={17} />, text: "Save" }}
-        onSave={handleSubmit(onSubmit)}
-        isLoading={isDeleting}
+        onSave={handleSubmit(
+          modalBody.body === "update" ? onSubmitUpdating : onSubmitCreating,
+        )}
+        onClose={onCloseModal}
+        onCancel={onCancelHandler}
       >
         <HStack gap={6}>
           <VStack flex={"1 40%"}>

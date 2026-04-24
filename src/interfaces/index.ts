@@ -39,28 +39,34 @@ export interface IProduct {
   };
   categories: [
     {
-      id: string | undefined;
+      documentId: string;
       title: string;
     },
   ];
 }
 export interface IProductForm {
+  id: string | undefined;
+  documentId: string;
   title: string;
   description: string;
   price: number;
   stock: number;
   thumbnail: {
     id: string | undefined;
+    documentId: string;
     url: string;
     name: string;
     alternativeText: string;
   } | null;
-  categories: [
-    {
-      id: string | undefined;
-      title: string;
-    },
-  ] | null;
+  categories:
+    | [
+        {
+          id: string | undefined;
+          documentId: string;
+          title: string;
+        },
+      ]
+    | null;
 }
 
 export interface ICartItem {

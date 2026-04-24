@@ -13,6 +13,7 @@ interface IProps {
   };
   onClose: () => void;
   onSave: () => void;
+  onCancel: () => void;
 }
 
 const ModalDialog = ({
@@ -22,6 +23,7 @@ const ModalDialog = ({
   title,
   onSave,
   onClose,
+  onCancel,
   children
 }: IProps) => {
   return (
@@ -44,7 +46,7 @@ const ModalDialog = ({
             </Dialog.Body>
             <Dialog.Footer>
               <Dialog.ActionTrigger asChild>
-                <Button variant="outline">
+                <Button variant="outline" onClick={onCancel}>
                   <BiUndo size={17} />
                   Cancel
                 </Button>
@@ -61,7 +63,7 @@ const ModalDialog = ({
               </Button>
             </Dialog.Footer>
             <Dialog.CloseTrigger asChild>
-              <CloseButton size="sm" />
+              <CloseButton size="sm"/>
             </Dialog.CloseTrigger>
           </Dialog.Content>
         </Dialog.Positioner>

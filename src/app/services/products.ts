@@ -1,5 +1,6 @@
 import CookieService from "@/services/CookieService";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { data } from "react-router-dom";
 
 export const ProductsApiSlice = createApi({
   reducerPath: "api",
@@ -21,6 +22,39 @@ export const ProductsApiSlice = createApi({
       },
       providesTags: ["Products"],
     }),
+    updateDashboardProducts: build.mutation({
+      query: ({ documentId, body }) => {
+        return {
+          url: `products/${documentId}`,
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${CookieService.get("jwt")}`,
+          },
+          
+          body: body,
+        };
+      },
+      async onQueryStarted(
+        { documentId, ...patch },
+        { dispatch, queryFulfilled },
+      ) {
+        const patchResult = dispatch(
+          ProductsApiSlice.util.updateQueryData(
+            "getDashboardProducts",
+            documentId,
+            (draft) => {
+              Object.assign(draft, patch);
+            },
+          ),
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
+      invalidatesTags: ["Products"],
+    }),
     deleteDashboardProducts: build.mutation({
       query: (documentId) => {
         return {
@@ -39,4 +73,5 @@ export const ProductsApiSlice = createApi({
 export const {
   useGetDashboardProductsQuery,
   useDeleteDashboardProductsMutation,
+  useUpdateDashboardProductsMutation,
 } = ProductsApiSlice;

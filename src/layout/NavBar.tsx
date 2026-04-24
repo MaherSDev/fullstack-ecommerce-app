@@ -89,7 +89,7 @@ export default function Navbar() {
                 <Menu.Trigger asChild>
                   <Button rounded="full" variant="ghost" minW="0">
                     <Avatar.Root size="sm">
-                      <Avatar.Image src="https://avatars.dicebear.com/api/male/username.svg" />
+                      <Avatar.Image src="https://api.dicebear.com/9.x/toon-head/svg?seed=Maria" />
                       <Avatar.Fallback name="Username" />
                     </Avatar.Root>
                   </Button>
@@ -100,7 +100,7 @@ export default function Navbar() {
                     <Menu.Content>
                       <Center py="4">
                         <Avatar.Root size="sm">
-                          <Avatar.Image src="https://avatars.dicebear.com/api/male/username.svg" />
+                          <Avatar.Image src="https://api.dicebear.com/9.x/toon-head/svg?seed=Maria" />
                           <Avatar.Fallback name="Username" />
                         </Avatar.Root>
                       </Center>
