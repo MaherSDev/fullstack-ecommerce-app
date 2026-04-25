@@ -5,6 +5,7 @@ import globalSlice from "./features/globalSlice";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { ProductsApiSlice } from "./services/products";
+import { CategoriesApiSlice } from "./services/categories";
 
 const resolvedStorage =
   (storage as unknown as { default?: typeof storage }).default ?? storage;
@@ -21,6 +22,7 @@ export const store = configureStore({
     login: loginSlice,
     global: globalSlice,
     [ProductsApiSlice.reducerPath]: ProductsApiSlice.reducer,
+    [CategoriesApiSlice.reducerPath]: CategoriesApiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -34,7 +36,7 @@ export const store = configureStore({
           "persist/PURGE",
         ],
       },
-    }).concat([ProductsApiSlice.middleware]),
+    }).concat([ProductsApiSlice.middleware], [CategoriesApiSlice.middleware]),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

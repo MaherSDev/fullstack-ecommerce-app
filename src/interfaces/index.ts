@@ -32,17 +32,13 @@ export interface IProduct {
   price: number;
   stock: number;
   thumbnail: {
+    documentId: string;
     id: string | undefined;
     url: string;
     name: string;
     alternativeText: string;
   };
-  categories: [
-    {
-      documentId: string;
-      title: string;
-    },
-  ];
+  categories: ICategory[];
 }
 export interface IProductForm {
   id: string | undefined;
@@ -58,17 +54,14 @@ export interface IProductForm {
     name: string;
     alternativeText: string;
   } | null;
-  categories:
-    | [
-        {
-          id: string | undefined;
-          documentId: string;
-          title: string;
-        },
-      ]
-    | null;
+  categories: ICategory[];
 }
-
+export interface ICategory {
+  id: string;
+  documentId: string;
+  title: string;
+	products?: IProduct[];
+}
 export interface ICartItem {
   data: [
     {

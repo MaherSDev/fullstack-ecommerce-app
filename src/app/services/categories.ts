@@ -1,36 +1,35 @@
-import type { IProduct } from "@/interfaces";
+import type { ICategory } from "@/interfaces";
 import CookieService from "@/services/CookieService";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export const ProductsApiSlice = createApi({
-  reducerPath: "productApi",
-  tagTypes: ["Products"],
+export const CategoriesApiSlice = createApi({
+  reducerPath: "categoryApi",
+  tagTypes: ["Categories"],
   refetchOnReconnect: true,
   refetchOnMountOrArgChange: true,
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_APi_URL }),
   endpoints: (build) => ({
-    getDashboardProducts: build.query({
+    getDashboardCategories: build.query({
       query: (arg) => {
         const { page = 1 } = arg;
         return {
-          url: `products?pagination[page]=${page}&pagination[pageSize]=10`,
+          url: `categories?pagination[page]=${page}&pagination[pageSize]=10`,
           params: {
-            "populate[0]": "thumbnail",
-            "populate[1]": "categories",
+            "populate[0]": "products",
           },
         };
       },
-      providesTags: ["Products"],
+      providesTags: ["Categories"],
     }),
-    updateDashboardProducts: build.mutation({
+    updateDashboardCategories: build.mutation({
       query: ({ documentId, body }) => {
         return {
-          url: `products/${documentId}`,
+          url: `categories/${documentId}`,
           method: "PUT",
           headers: {
             Authorization: `Bearer ${CookieService.get("jwt")}`,
           },
-
+          
           body,
         };
       },
@@ -39,19 +38,19 @@ export const ProductsApiSlice = createApi({
         { dispatch, queryFulfilled },
       ) {
         const patchResult = dispatch(
-          ProductsApiSlice.util.updateQueryData(
-            "getDashboardProducts",
+          CategoriesApiSlice.util.updateQueryData(
+            "getDashboardCategories",
             { page: 1 },
             (draft) => {
-              const product = draft.data.find(
-                (p: IProduct) => p.documentId === documentId,
-              );
+              const category = draft.data.find(
+								(p: ICategory) => p.documentId === documentId
+							);
 
-              if (product) {
-                Object.assign(product, patch.data);
-              } else {
-                Object.assign(draft, patch);
-              }
+							if (category) {
+								Object.assign(category, patch.data);
+							}else {
+								Object.assign(draft, patch);
+							}
             },
           ),
         );
@@ -61,25 +60,25 @@ export const ProductsApiSlice = createApi({
           patchResult.undo();
         }
       },
-      invalidatesTags: ["Products"],
+      invalidatesTags: ["Categories"],
     }),
-    deleteDashboardProducts: build.mutation({
+    deleteDashboardCategories: build.mutation({
       query: (documentId) => {
         return {
-          url: `products/${documentId}`,
+          url: `categories/${documentId}`,
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${CookieService.get("jwt")}`,
           },
         };
       },
-      invalidatesTags: ["Products"],
+      invalidatesTags: ["Categories"],
     }),
   }),
 });
 
 export const {
-  useGetDashboardProductsQuery,
-  useDeleteDashboardProductsMutation,
-  useUpdateDashboardProductsMutation,
-} = ProductsApiSlice;
+  useGetDashboardCategoriesQuery,
+  useDeleteDashboardCategoriesMutation,
+  useUpdateDashboardCategoriesMutation,
+} = CategoriesApiSlice;

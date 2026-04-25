@@ -7,7 +7,7 @@ import { AiOutlineEye } from "react-icons/ai";
 import { MdOutlineDownloadDone } from "react-icons/md";
 import { BsTrash } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
-import type { IProduct, IProductForm } from "@/interfaces";
+import type { ICategory, IProduct, IProductForm } from "@/interfaces";
 import {
   ActionBar,
   Box,
@@ -15,6 +15,7 @@ import {
   Checkbox,
   Field,
   FileUpload,
+  For,
   HStack,
   Icon,
   IconButton,
@@ -22,9 +23,12 @@ import {
   Input,
   InputGroup,
   Kbd,
+  NativeSelect,
   NumberInput,
   Portal,
   Table,
+  Tag,
+  Text,
   Textarea,
   useDisclosure,
   VStack,
@@ -38,6 +42,7 @@ import { useColorModeValue } from "@/components/ui/color-mode";
 import { LuDollarSign, LuUpload } from "react-icons/lu";
 import CookieService from "@/services/CookieService";
 import axiosInstance from "@/api/axios.config";
+import { useGetDashboardCategoriesQuery } from "@/app/services/categories";
 
 interface IFile {
   lastModified: number;
@@ -58,7 +63,7 @@ const ProductsTable = () => {
     price: 0,
     stock: 0,
     thumbnail: null,
-    categories: null,
+    categories: [],
   };
   const thumbnailDefaultValues = {
     lastModified: 0,
@@ -96,6 +101,11 @@ const ProductsTable = () => {
     { isLoading: isUpdating, isSuccess: isSuccessUpdating },
   ] = useUpdateDashboardProductsMutation();
   const { isLoading, data, error } = useGetDashboardProductsQuery({ page: 1 });
+  const {
+    isLoading: isLoadingCategories,
+    data: categories,
+    error: errorCategories,
+  } = useGetDashboardCategoriesQuery({ page: 1 });
 
   useEffect(() => {
     if (isSuccessDeleting) {
@@ -118,9 +128,10 @@ const ProductsTable = () => {
     defaultValues: productDefaultValues,
   });
 
-
+  console.log(categories);
   const onSubmitUpdating: SubmitHandler<IProductForm> = async (data, e) => {
     e?.preventDefault();
+    console.log(data);
 
     const updatedData = {
       data: {
@@ -226,8 +237,17 @@ const ProductsTable = () => {
       </Table.Cell>
       <Table.Cell>{product.title}</Table.Cell>
       <Table.Cell>
-        {product.categories.map((cat) => (
-          <span key={cat.id}>{cat.title}</span>
+        {product.categories?.map((cat: ICategory) => (
+          <Text
+            color={"blue.400"}
+            fontWeight={"semibold"}
+            textTransform={"capitalize"}
+            as={"span"}
+            key={cat.id}
+            _notLast={{ _after: { content: '", "' } }}
+          >
+            {cat.title}
+          </Text>
         ))}
       </Table.Cell>
       <Table.Cell>${product.price}</Table.Cell>
@@ -274,13 +294,12 @@ const ProductsTable = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    console.log(name, ": ", value);
     setValue(name, value);
   };
 
   const onCancelHandler = () => {
     setFile(thumbnailDefaultValues);
-  }
+  };
 
   const changeThumbnailHandler = () => {
     setFile(thumbnailDefaultValues);
@@ -293,6 +312,7 @@ const ProductsTable = () => {
     });
   };
 
+  console.log(getValues("categories"));
   const cancelThumbnailHandler = () => {
     setFile(thumbnailDefaultValues);
     setProductThumbnail(getValues("thumbnail"));
@@ -479,13 +499,14 @@ const ProductsTable = () => {
               <Field.Label>Price</Field.Label>
               <Controller
                 control={control}
-                {...register("price", {
+                name="price"
+                rules={{
                   required: "Price is required",
                   min: {
                     value: 1,
                     message: "Price must be at least 1",
                   },
-                })}
+                }}
                 render={({ field }) => (
                   <NumberInput.Root
                     disabled={field.disabled}
@@ -512,13 +533,14 @@ const ProductsTable = () => {
               <Field.Label>Stock</Field.Label>
               <Controller
                 control={control}
-                {...register("stock", {
+                name="stock"
+                rules={{
                   required: "stock is required",
                   min: {
                     value: 1,
                     message: "Stock must be at least 1",
                   },
-                })}
+                }}
                 render={({ field }) => (
                   <NumberInput.Root
                     disabled={field.disabled}
@@ -537,6 +559,76 @@ const ProductsTable = () => {
                 )}
               />
               <Field.ErrorText>{errors.stock?.message}</Field.ErrorText>
+            </Field.Root>
+            {/* Category */}
+            <Field.Root>
+              <Controller
+                control={control}
+                name="categories"
+                rules={{ required: "At least one category is required" }}
+                render={({ field }) => (
+                  <>
+                    <Field.Label>Categories</Field.Label>
+                    <NativeSelect.Root size="sm" width="240px">
+                      <NativeSelect.Field
+                        placeholder="Select option"
+                        value=""
+                        onChange={(e) => {
+                          const selected = categories.data.find(
+                            (c: ICategory) => c.documentId === e.target.value,
+                          );
+                          field.onChange([...(field.value || []), selected]);
+                        }}
+                      >
+                        <For each={categories.data}>
+                          {(cat: ICategory) => (
+                            <option
+                              key={cat.documentId}
+                              value={cat.documentId}
+                              disabled={
+                                field.value.find(
+                                  (exist) =>
+                                    exist.documentId === cat.documentId,
+                                )
+                                  ? true
+                                  : false
+                              }
+                            >
+                              {cat.title}
+                            </option>
+                          )}
+                        </For>
+                      </NativeSelect.Field>
+                      <NativeSelect.Indicator />
+                    </NativeSelect.Root>
+                    <HStack>
+                      <For each={field.value || []}>
+                        {(cat) => (
+                          <Tag.Root key={cat.documentId} size={"lg"}>
+                            <Tag.Label textTransform={"capitalize"}>
+                              {cat.title}
+                            </Tag.Label>
+                            <Tag.EndElement h={10}>
+                              <Tag.CloseTrigger
+                                h={"full"}
+                                _hover={{ color: "red.500", cursor: "pointer" }}
+                                onClick={() => {
+                                  field.onChange(
+                                    field.value.filter(
+                                      (c: ICategory) =>
+                                        c.documentId !== cat.documentId,
+                                    ),
+                                  );
+                                }}
+                              />
+                            </Tag.EndElement>
+                          </Tag.Root>
+                        )}
+                      </For>
+                    </HStack>
+                  </>
+                )}
+              />
             </Field.Root>
           </VStack>
         </HStack>
