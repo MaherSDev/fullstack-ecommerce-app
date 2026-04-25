@@ -36,6 +36,7 @@ export interface IProduct {
     id: string | undefined;
     url: string;
     name: string;
+    size: number;
     alternativeText: string;
   };
   categories: ICategory[];
@@ -52,6 +53,7 @@ export interface IProductForm {
     documentId: string;
     url: string;
     name: string;
+    size: number;
     alternativeText: string;
   } | null;
   categories: ICategory[];
@@ -60,7 +62,7 @@ export interface ICategory {
   id: string;
   documentId: string;
   title: string;
-	products?: IProduct[];
+  products?: IProduct[];
 }
 export interface ICartItem {
   data: [

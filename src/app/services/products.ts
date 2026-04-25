@@ -63,6 +63,20 @@ export const ProductsApiSlice = createApi({
       },
       invalidatesTags: ["Products"],
     }),
+    createDashboardProducts: build.mutation({
+      query: ({ body }) => {
+        return {
+          url: `products`,
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${CookieService.get("jwt")}`,
+          },
+
+          body,
+        };
+      },
+      invalidatesTags: ["Products"],
+    }),
     deleteDashboardProducts: build.mutation({
       query: (documentId) => {
         return {
@@ -82,4 +96,5 @@ export const {
   useGetDashboardProductsQuery,
   useDeleteDashboardProductsMutation,
   useUpdateDashboardProductsMutation,
+  useCreateDashboardProductsMutation,
 } = ProductsApiSlice;

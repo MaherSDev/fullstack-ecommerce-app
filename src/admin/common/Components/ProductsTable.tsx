@@ -2,6 +2,7 @@ import {
   useGetDashboardProductsQuery,
   useDeleteDashboardProductsMutation,
   useUpdateDashboardProductsMutation,
+  useCreateDashboardProductsMutation,
 } from "@/app/services/products";
 import { AiOutlineEye } from "react-icons/ai";
 import { MdOutlineDownloadDone } from "react-icons/md";
@@ -43,13 +44,7 @@ import { LuDollarSign, LuUpload } from "react-icons/lu";
 import CookieService from "@/services/CookieService";
 import axiosInstance from "@/api/axios.config";
 import { useGetDashboardCategoriesQuery } from "@/app/services/categories";
-
-interface IFile {
-  lastModified: number;
-  name: string;
-  size: number;
-  type: string;
-}
+import type React from "react";
 
 interface IModalBody {
   body: "update" | "delete" | "create" | "";
@@ -65,27 +60,12 @@ const ProductsTable = () => {
     thumbnail: null,
     categories: [],
   };
-  const thumbnailDefaultValues = {
-    lastModified: 0,
-    name: "",
-    size: 0,
-    type: "",
-  };
 
   const border = useColorModeValue("gray.200", "gray.500");
   const [modalBody, setModalBody] = useState<IModalBody>({ body: "create" });
   const [selection, setSelection] = useState<string[]>([]);
   const [clickedProductId, setClickedProductId] = useState<string>("");
-  const [file, setFile] = useState<IFile>(thumbnailDefaultValues);
-  const [productThumbnail, setProductThumbnail] = useState<
-    IProductForm["thumbnail"]
-  >({
-    documentId: "",
-    id: "",
-    url: "",
-    name: "",
-    alternativeText: "",
-  });
+
   const { open, onOpen, onClose } = useDisclosure();
   const {
     open: openModal,
@@ -100,12 +80,27 @@ const ProductsTable = () => {
     onUpdateHandler,
     { isLoading: isUpdating, isSuccess: isSuccessUpdating },
   ] = useUpdateDashboardProductsMutation();
+  const [
+    onCreateHandler,
+    { isLoading: isCreating, isSuccess: isSuccessCreating },
+  ] = useCreateDashboardProductsMutation();
   const { isLoading, data, error } = useGetDashboardProductsQuery({ page: 1 });
   const {
     isLoading: isLoadingCategories,
     data: categories,
     error: errorCategories,
   } = useGetDashboardCategoriesQuery({ page: 1 });
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<IProductForm>({
+    defaultValues: productDefaultValues,
+  });
 
   useEffect(() => {
     if (isSuccessDeleting) {
@@ -114,39 +109,27 @@ const ProductsTable = () => {
     if (isSuccessUpdating) {
       onCloseModal();
     }
-  }, [isSuccessDeleting, isSuccessUpdating, onCloseModal, onClose]);
-
-  const {
-    register,
-    handleSubmit,
+    if (isSuccessCreating) {
+      reset(productDefaultValues);
+      onCloseModal();
+    }
+  }, [
+    isSuccessDeleting,
+    isSuccessUpdating,
+    isSuccessCreating,
+    onCloseModal,
+    onClose,
     reset,
-    setValue,
-    getValues,
-    control,
-    formState: { errors, isSubmitting },
-  } = useForm<IProductForm>({
-    defaultValues: productDefaultValues,
-  });
+  ]);
 
-  console.log(categories);
-  const onSubmitUpdating: SubmitHandler<IProductForm> = async (data, e) => {
+  const handleSubmitProduct: SubmitHandler<IProductForm> = async (data, e) => {
     e?.preventDefault();
-    console.log(data);
 
-    const updatedData = {
-      data: {
-        title: data.title,
-        description: data.description,
-        price: data.price,
-        stock: data.stock,
-        categories: data.categories?.map((c) => c.id) || [],
-        thumbnail: data.thumbnail,
-      },
-    };
+    let thumbnailId = data.thumbnail;
 
-    if (file.size) {
+    if (data.thumbnail instanceof File) {
       const formData = new FormData();
-      formData.append("files", file);
+      formData.append("files", data.thumbnail);
 
       const { data: fileData } = await axiosInstance.post("upload", formData, {
         headers: {
@@ -154,49 +137,33 @@ const ProductsTable = () => {
         },
       });
 
-      updatedData.data.thumbnail = fileData[0].id;
+      thumbnailId = fileData[0].id;
     }
-    const { data: newData } = await onUpdateHandler({
-      documentId: data.documentId,
-      body: updatedData,
-    });
-    if (newData.data) {
-      setFile(thumbnailDefaultValues);
-    }
-  };
 
-  const onSubmitCreating: SubmitHandler<IProductForm> = async (data, e) => {
-    e?.preventDefault();
-
-    const updatedData = {
+    const payload = {
       data: {
         title: data.title,
         description: data.description,
-        price: data.price,
-        stock: data.stock,
+        price: +data.price,
+        stock: +data.stock,
         categories: data.categories?.map((c) => c.id) || [],
-        thumbnail: data.thumbnail,
+        thumbnail: thumbnailId || null,
       },
     };
 
-    if (file.size) {
-      const formData = new FormData();
-      formData.append("files", file);
+    const action = data.documentId
+      ? onUpdateHandler({
+          documentId: data.documentId,
+          body: payload,
+        })
+      : onCreateHandler({
+          body: payload,
+        });
 
-      const { data: fileData } = await axiosInstance.post("upload", formData, {
-        headers: {
-          Authorization: `Bearer ${CookieService.get("jwt")}`,
-        },
-      });
+    const { data: response } = await action;
 
-      updatedData.data.thumbnail = fileData[0].id;
-    }
-    const { data: newData } = await onUpdateHandler({
-      documentId: data.documentId,
-      body: updatedData,
-    });
-    if (newData.data) {
-      setFile(thumbnailDefaultValues);
+    if (response?.data) {
+      reset();
     }
   };
 
@@ -280,7 +247,6 @@ const ProductsTable = () => {
           onClick={() => {
             setModalBody({ body: "update" });
             reset(product);
-            setProductThumbnail(getValues("thumbnail"));
             onOpenModal();
           }}
         >
@@ -297,32 +263,26 @@ const ProductsTable = () => {
     setValue(name, value);
   };
 
-  const onCancelHandler = () => {
-    setFile(thumbnailDefaultValues);
-  };
-
-  const changeThumbnailHandler = () => {
-    setFile(thumbnailDefaultValues);
-    setProductThumbnail({
-      documentId: "",
-      id: "",
-      url: "",
-      name: "",
-      alternativeText: "",
-    });
-  };
-
-  console.log(getValues("categories"));
-  const cancelThumbnailHandler = () => {
-    setFile(thumbnailDefaultValues);
-    setProductThumbnail(getValues("thumbnail"));
-  };
-
   if (isLoading) return "Loading...";
   if (error) return "No Data Found";
 
   return (
     <>
+      <Box>
+        <Button
+          variant="solid"
+          colorPalette={"blue"}
+          mr={3}
+          loading={isLoading}
+          onClick={() => {
+            reset(productDefaultValues);
+            setModalBody({ body: "create" });
+            onOpenModal();
+          }}
+        >
+          Create Product
+        </Button>
+      </Box>
       <Table.Root>
         <Table.Header>
           <Table.Row>
@@ -386,78 +346,105 @@ const ProductsTable = () => {
       />
       <ModalDialog
         isOpen={openModal}
-        isLoading={isUpdating}
+        isLoading={modalBody.body === "update" ? isUpdating : isCreating}
         title={"Update product"}
         okText={{ icon: <MdOutlineDownloadDone size={17} />, text: "Save" }}
-        onSave={handleSubmit(
-          modalBody.body === "update" ? onSubmitUpdating : onSubmitCreating,
-        )}
+        onSave={handleSubmit(handleSubmitProduct)}
         onClose={onCloseModal}
-        onCancel={onCancelHandler}
       >
         <HStack gap={6}>
-          <VStack flex={"1 40%"}>
-            {productThumbnail?.url || file?.size ? (
-              file?.size ? (
-                <Image
-                  src={URL.createObjectURL(file)}
-                  alt={file?.name}
-                  h={"260px"}
-                  objectFit={"cover"}
-                />
-              ) : (
-                <Image
-                  src={`${import.meta.env.VITE_SERVER_URL}${productThumbnail?.url}`}
-                  alt={productThumbnail?.name}
-                  h={"260px"}
-                  objectFit={"cover"}
-                />
-              )
-            ) : (
-              <FileUpload.Root
-                h={"260px"}
-                maxW="xl"
-                alignItems="stretch"
-                name="thumbnail"
-                onFileAccept={({ files }): void => {
-                  setFile(files[0]);
-                }}
-                accept={{ "image/*": [".png", ".jpg", ".jpeg"] }}
-              >
-                <FileUpload.HiddenInput />
-                <FileUpload.Dropzone>
-                  <Icon size="md" color="fg.muted">
-                    <LuUpload />
-                  </Icon>
-                  <FileUpload.DropzoneContent>
-                    <Box>Drag and drop files here</Box>
-                    <Box color="fg.muted">.png, .jpg up to 5MB</Box>
-                  </FileUpload.DropzoneContent>
-                </FileUpload.Dropzone>
-              </FileUpload.Root>
-            )}
-            <HStack mt={3}>
-              <Button
-                variant="solid"
-                colorPalette={"blue"}
-                mr={3}
-                onClick={changeThumbnailHandler}
-              >
-                Change product image
-              </Button>
-              {!productThumbnail?.url || file.size ? (
-                <Button
-                  variant="solid"
-                  colorPalette={"red"}
-                  mr={3}
-                  onClick={cancelThumbnailHandler}
-                >
-                  Cancel
-                </Button>
-              ) : (
-                ""
-              )}
-            </HStack>
+          <VStack flex="1 40%">
+            <Controller
+              control={control}
+              name="thumbnail"
+              rules={{
+                required: "Image is required",
+                validate: (file) =>
+                  !file ||
+                  file.size <= 5 * 1024 * 1024 ||
+                  "Max file size is 5MB",
+              }}
+              render={({ field }) => {
+                const previewUrl =
+                  field.value instanceof File
+                    ? URL.createObjectURL(field.value)
+                    : field.value?.url
+                      ? `${import.meta.env.VITE_SERVER_URL}${field.value?.url}`
+                      : null;
+
+                return (
+                  <>
+                    {/* Preview OR Upload */}
+                    {previewUrl ? (
+                      <Image
+                        src={previewUrl}
+                        alt="thumbnail"
+                        h="260px"
+                        objectFit="cover"
+                      />
+                    ) : (
+                      <Field.Root invalid={!!errors.thumbnail}>
+                        <FileUpload.Root
+                          h="260px"
+                          maxW="xl"
+                          alignItems="stretch"
+                          accept={{ "image/*": [".png", ".jpg", ".jpeg"] }}
+                          onFileAccept={({ files }) => {
+                            const file = files?.[0];
+                            if (!file) return;
+
+                            field.onChange(file); // ✅ RHF update
+                          }}
+                        >
+                          <FileUpload.HiddenInput />
+
+                          <FileUpload.Dropzone
+                            border={errors.thumbnail && "1px dashed red"}
+                          >
+                            <Icon size="md" color="fg.muted">
+                              <LuUpload />
+                            </Icon>
+
+                            <FileUpload.DropzoneContent>
+                              <Box>Drag and drop files here</Box>
+                              <Box color="fg.muted">.png, .jpg up to 5MB</Box>
+                              <Field.ErrorText>
+                                {errors.thumbnail?.message}
+                              </Field.ErrorText>
+                            </FileUpload.DropzoneContent>
+                          </FileUpload.Dropzone>
+                        </FileUpload.Root>
+                      </Field.Root>
+                    )}
+
+                    {/* Actions */}
+                    <HStack mt={3}>
+                      <Button
+                        variant="solid"
+                        colorPalette="blue"
+                        onClick={() => {
+                          field.onChange(null);
+                        }}
+                      >
+                        Change product image
+                      </Button>
+
+                      {field.value && (
+                        <Button
+                          variant="solid"
+                          colorPalette="red"
+                          onClick={() => {
+                            field.onChange(null);
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                      )}
+                    </HStack>
+                  </>
+                );
+              }}
+            />
           </VStack>
           {/* Title */}
           <VStack flex={"1 60%"} gap={3}>
@@ -483,10 +470,10 @@ const ProductsTable = () => {
               <Textarea
                 placeholder="Product description"
                 {...register("description", {
-                  required: "description is required",
+                  required: "Description is required",
                   minLength: {
-                    value: 15,
-                    message: "Description should be at least 15 charachters",
+                    value: 8,
+                    message: "Description should be at least 8 characters",
                   },
                   onChange: onChangeHandler,
                 })}
@@ -504,7 +491,7 @@ const ProductsTable = () => {
                   required: "Price is required",
                   min: {
                     value: 1,
-                    message: "Price must be at least 1",
+                    message: "Price can not be 0",
                   },
                 }}
                 render={({ field }) => (
@@ -538,7 +525,7 @@ const ProductsTable = () => {
                   required: "stock is required",
                   min: {
                     value: 1,
-                    message: "Stock must be at least 1",
+                    message: "Stock can not be 0",
                   },
                 }}
                 render={({ field }) => (
@@ -561,11 +548,10 @@ const ProductsTable = () => {
               <Field.ErrorText>{errors.stock?.message}</Field.ErrorText>
             </Field.Root>
             {/* Category */}
-            <Field.Root>
+            <Field.Root invalid={!!errors.categories}>
               <Controller
                 control={control}
                 name="categories"
-                rules={{ required: "At least one category is required" }}
                 render={({ field }) => (
                   <>
                     <Field.Label>Categories</Field.Label>
@@ -629,6 +615,7 @@ const ProductsTable = () => {
                   </>
                 )}
               />
+              <Field.ErrorText>{errors.categories?.message}</Field.ErrorText>
             </Field.Root>
           </VStack>
         </HStack>
