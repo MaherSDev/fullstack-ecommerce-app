@@ -8,7 +8,7 @@ import { AiOutlineEye } from "react-icons/ai";
 import { MdOutlineDownloadDone } from "react-icons/md";
 import { BsTrash } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
-import type { ICategory, IProduct, IProductForm } from "@/interfaces";
+import type { ICategory, IProduct } from "@/interfaces";
 import {
   ActionBar,
   Box,
@@ -41,28 +41,22 @@ import ModalDialog from "@/shared/ModalDialog";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import { LuDollarSign, LuUpload } from "react-icons/lu";
-import CookieService from "@/services/CookieService";
-import axiosInstance from "@/api/axios.config";
 import { useGetDashboardCategoriesQuery } from "@/app/services/categories";
 import type React from "react";
-
-interface IModalBody {
-  body: "update" | "delete" | "create" | "";
-}
+import { useCreateDashboardMediaMutation } from "@/app/services/media";
 
 const ProductsTable = () => {
   const productDefaultValues = {
+    id: "",
     documentId: "",
     title: "",
     description: "",
     price: 0,
     stock: 0,
-    thumbnail: null,
     categories: [],
   };
 
   const border = useColorModeValue("gray.200", "gray.500");
-  const [modalBody, setModalBody] = useState<IModalBody>({ body: "create" });
   const [selection, setSelection] = useState<string[]>([]);
   const [clickedProductId, setClickedProductId] = useState<string>("");
 
@@ -76,20 +70,13 @@ const ProductsTable = () => {
     onDeleteHandler,
     { isLoading: isDeleting, isSuccess: isSuccessDeleting },
   ] = useDeleteDashboardProductsMutation();
-  const [
-    onUpdateHandler,
-    { isLoading: isUpdating, isSuccess: isSuccessUpdating },
-  ] = useUpdateDashboardProductsMutation();
-  const [
-    onCreateHandler,
-    { isLoading: isCreating, isSuccess: isSuccessCreating },
-  ] = useCreateDashboardProductsMutation();
+  const [onUpdateHandler, { isSuccess: isSuccessUpdating }] =
+    useUpdateDashboardProductsMutation();
+  const [onCreateHandler, { isSuccess: isSuccessCreating }] =
+    useCreateDashboardProductsMutation();
+  const [onUploadHandler] = useCreateDashboardMediaMutation();
   const { isLoading, data, error } = useGetDashboardProductsQuery({ page: 1 });
-  const {
-    isLoading: isLoadingCategories,
-    data: categories,
-    error: errorCategories,
-  } = useGetDashboardCategoriesQuery({ page: 1 });
+  const { data: categories } = useGetDashboardCategoriesQuery({ page: 1 });
 
   const {
     register,
@@ -98,7 +85,7 @@ const ProductsTable = () => {
     setValue,
     control,
     formState: { errors, isSubmitting },
-  } = useForm<IProductForm>({
+  } = useForm<IProduct>({
     defaultValues: productDefaultValues,
   });
 
@@ -110,7 +97,7 @@ const ProductsTable = () => {
       onCloseModal();
     }
     if (isSuccessCreating) {
-      reset(productDefaultValues);
+      reset();
       onCloseModal();
     }
   }, [
@@ -122,7 +109,7 @@ const ProductsTable = () => {
     reset,
   ]);
 
-  const handleSubmitProduct: SubmitHandler<IProductForm> = async (data, e) => {
+  const handleSubmitProduct: SubmitHandler<IProduct> = async (data, e) => {
     e?.preventDefault();
 
     let thumbnailId = data.thumbnail;
@@ -130,13 +117,13 @@ const ProductsTable = () => {
     if (data.thumbnail instanceof File) {
       const formData = new FormData();
       formData.append("files", data.thumbnail);
-
-      const { data: fileData } = await axiosInstance.post("upload", formData, {
-        headers: {
-          Authorization: `Bearer ${CookieService.get("jwt")}`,
-        },
-      });
-
+      formData.append(
+        "fileInfo",
+        JSON.stringify({
+          alternativeText: data.thumbnail.name.replace(/\.[^/.]+$/, ""),
+        }),
+      );
+      const { data: fileData } = await onUploadHandler(formData);
       thumbnailId = fileData[0].id;
     }
 
@@ -180,12 +167,12 @@ const ProductsTable = () => {
           size="sm"
           top="0.5"
           aria-label="Select row"
-          checked={selection.includes(product.title)}
+          checked={selection.includes(product.documentId)}
           onCheckedChange={(changes) => {
             setSelection((prev) =>
               changes.checked
-                ? [...prev, product.title]
-                : selection.filter((name) => name !== product.title),
+                ? [...prev, product.documentId]
+                : selection.filter((name) => name !== product.documentId),
             );
           }}
         >
@@ -245,7 +232,6 @@ const ProductsTable = () => {
           variant="solid"
           colorPalette={"blue"}
           onClick={() => {
-            setModalBody({ body: "update" });
             reset(product);
             onOpenModal();
           }}
@@ -276,7 +262,6 @@ const ProductsTable = () => {
           loading={isLoading}
           onClick={() => {
             reset(productDefaultValues);
-            setModalBody({ body: "create" });
             onOpenModal();
           }}
         >
@@ -295,7 +280,7 @@ const ProductsTable = () => {
                 onCheckedChange={(changes) => {
                   setSelection(
                     changes.checked
-                      ? data.data.map((product: IProduct) => product.title)
+                      ? data.data.map((product: IProduct) => product.documentId)
                       : [],
                   );
                 }}
@@ -346,7 +331,7 @@ const ProductsTable = () => {
       />
       <ModalDialog
         isOpen={openModal}
-        isLoading={modalBody.body === "update" ? isUpdating : isCreating}
+        isLoading={isSubmitting}
         title={"Update product"}
         okText={{ icon: <MdOutlineDownloadDone size={17} />, text: "Save" }}
         onSave={handleSubmit(handleSubmitProduct)}
@@ -393,7 +378,7 @@ const ProductsTable = () => {
                             const file = files?.[0];
                             if (!file) return;
 
-                            field.onChange(file); // ✅ RHF update
+                            field.onChange(file);
                           }}
                         >
                           <FileUpload.HiddenInput />

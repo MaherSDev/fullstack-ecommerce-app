@@ -12,7 +12,7 @@ const ProtectedRoute = () => {
 
   return (
     <>
-      <Box as={"div"} h="calc(100dvh - 64px)">
+      <Box>
         <Outlet />
       </Box>
     </>

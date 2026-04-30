@@ -29,7 +29,7 @@ export const CategoriesApiSlice = createApi({
           headers: {
             Authorization: `Bearer ${CookieService.get("jwt")}`,
           },
-          
+
           body,
         };
       },
@@ -43,14 +43,14 @@ export const CategoriesApiSlice = createApi({
             { page: 1 },
             (draft) => {
               const category = draft.data.find(
-								(p: ICategory) => p.documentId === documentId
-							);
+                (p: ICategory) => p.documentId === documentId,
+              );
 
-							if (category) {
-								Object.assign(category, patch.data);
-							}else {
-								Object.assign(draft, patch);
-							}
+              if (category) {
+                Object.assign(category, patch.data);
+              } else {
+                Object.assign(draft, patch);
+              }
             },
           ),
         );
@@ -59,6 +59,20 @@ export const CategoriesApiSlice = createApi({
         } catch {
           patchResult.undo();
         }
+      },
+      invalidatesTags: ["Categories"],
+    }),
+    createDashboardCategories: build.mutation({
+      query: ({ body }) => {
+        return {
+          url: `categories`,
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${CookieService.get("jwt")}`,
+          },
+
+          body,
+        };
       },
       invalidatesTags: ["Categories"],
     }),
@@ -81,4 +95,5 @@ export const {
   useGetDashboardCategoriesQuery,
   useDeleteDashboardCategoriesMutation,
   useUpdateDashboardCategoriesMutation,
+  useCreateDashboardCategoriesMutation,
 } = CategoriesApiSlice;

@@ -8,20 +8,20 @@ interface IProps {}
 
 const AdminLayout = ({}: IProps) => {
   return (
-    <Flex h={"100dvh"}>
-      <Box minW={"300px"} borderRight={"1px solid gray"}>
+    <Flex minH={"100dvh"}>
+      <Box minW={"200px"} borderRight={"1px solid gray"}>
         <Sidebar />
       </Box>
       <Box flex={1}>
         <Box
-          h={"80px"}
+          h={"70px"}
           borderBottom={"1px solid gray"}
           bg={useColorModeValue("white", "black")}
           px="2"
         >
           <AdminNavbar />
         </Box>
-        <Box h={"calc(100% - 80px)"} p={4}>
+        <Box h={"calc(100% - 70px)"} p={4}>
           <Outlet />
         </Box>
       </Box>
