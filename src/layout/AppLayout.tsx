@@ -1,14 +1,16 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "./Navbar";
-import { Box } from "@chakra-ui/react";
+import Navbar from "./NavBar";
+import { Box, Flex } from "@chakra-ui/react";
 
 const AppLayout = () => {
   return (
     <>
-      <Box as={"div"} h="calc(100dvh - 64px)">
+      <Flex minH="100dvh" direction={"column"}>
         <Navbar />
-        <Outlet />
-      </Box>
+        <Box flex={1}>
+          <Outlet />
+        </Box>
+      </Flex>
     </>
   );
 };

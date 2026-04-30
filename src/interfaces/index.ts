@@ -24,6 +24,15 @@ export interface IUserData {
   email: string;
 }
 
+export interface IThumbnail {
+  documentId: string;
+  id: number;
+  url: string;
+  name: string;
+  size: number;
+  alternativeText: string;
+}
+
 export interface IProduct {
   id: string | undefined;
   documentId: string;
@@ -31,37 +40,14 @@ export interface IProduct {
   description: string;
   price: number;
   stock: number;
-  thumbnail: {
-    documentId: string;
-    id: string | undefined;
-    url: string;
-    name: string;
-    size: number;
-    alternativeText: string;
-  };
-  categories: ICategory[];
-}
-export interface IProductForm {
-  id: string | undefined;
-  documentId: string;
-  title: string;
-  description: string;
-  price: number;
-  stock: number;
-  thumbnail: {
-    id: string | undefined;
-    documentId: string;
-    url: string;
-    name: string;
-    size: number;
-    alternativeText: string;
-  } | null;
+  thumbnail?: IThumbnail;
   categories: ICategory[];
 }
 export interface ICategory {
   id: string;
   documentId: string;
   title: string;
+  description: string;
   products?: IProduct[];
 }
 export interface ICartItem {

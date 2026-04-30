@@ -1,7 +1,7 @@
-import Categories from "@/admin/pages/Categories";
 import Dashboard from "@/admin/pages/Dashboard";
+import ManageCategories from "@/admin/pages/ManageCategories";
 import ManageProducts from "@/admin/pages/ManageProducts";
-import Settings from "@/admin/pages/Settings";
+import Media from "@/admin/pages/Media";
 import type { INavLinks } from "@/interfaces";
 import { FiCompass, FiHome, FiSettings, FiTrendingUp } from "react-icons/fi";
 
@@ -22,12 +22,12 @@ export const SidebarContent: INavLinks[] = [
     label: "Categories",
     path: "categories",
     icon: <FiCompass />,
-    page: <Categories />,
+    page: <ManageCategories />,
   },
   {
-    label: "Settings",
-    path: "settings",
+    label: "Media",
+    path: "media",
     icon: <FiSettings />,
-    page: <Settings />,
+    page: <Media />,
   },
 ];
