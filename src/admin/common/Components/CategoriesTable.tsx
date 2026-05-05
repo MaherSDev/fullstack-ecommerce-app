@@ -18,7 +18,6 @@ import {
   HStack,
   IconButton,
   Input,
-  Kbd,
   NativeSelect,
   Portal,
   Table,
@@ -44,6 +43,8 @@ const CategoriesTable = () => {
   };
 
   const border = useColorModeValue("gray.200", "gray.500");
+  const bg = useColorModeValue("gray.300", "gray.800");
+  const color = useColorModeValue("gray.800", "gray.100");
   const [selection, setSelection] = useState<string[]>([]);
   const [clickedCategoryId, setClickedCategoryId] = useState<string>("");
 
@@ -85,7 +86,7 @@ const CategoriesTable = () => {
       onCloseModal();
     }
     if (isSuccessCreating) {
-      reset(categoryDefaultValues);
+      reset();
       onCloseModal();
     }
   }, [
@@ -124,25 +125,33 @@ const CategoriesTable = () => {
     }
   };
 
+  const onDeleteSelectedCategories = () => {
+    if (selection.length) {
+      selection.forEach((id) => onDeleteHandler(id));
+      return setSelection([]);
+    }
+    onDeleteHandler(clickedCategoryId);
+  };
+
   const hasSelection = selection.length > 0;
   const indeterminate = hasSelection && selection.length < data.data.length;
 
   const rows = data?.data.map((category: ICategory) => (
     <Table.Row
       key={category.id}
-      data-selected={selection.includes(category.title) ? "" : undefined}
+      data-selected={selection.includes(category.documentId) ? "" : undefined}
     >
       <Table.Cell>
         <Checkbox.Root
           size="sm"
           top="0.5"
           aria-label="Select row"
-          checked={selection.includes(category.title)}
+          checked={selection.includes(category.documentId)}
           onCheckedChange={(changes) => {
             setSelection((prev) =>
               changes.checked
-                ? [...prev, category.title]
-                : selection.filter((name) => name !== category.title),
+                ? [...prev, category.documentId]
+                : selection.filter((name) => name !== category.documentId),
             );
           }}
         >
@@ -216,7 +225,9 @@ const CategoriesTable = () => {
                 onCheckedChange={(changes) => {
                   setSelection(
                     changes.checked
-                      ? data.data.map((category: ICategory) => category.title)
+                      ? data.data.map(
+                          (category: ICategory) => category.documentId,
+                        )
                       : [],
                   );
                 }}
@@ -232,20 +243,21 @@ const CategoriesTable = () => {
         </Table.Header>
         <Table.Body>{rows}</Table.Body>
       </Table.Root>
-
       <ActionBar.Root open={hasSelection}>
         <Portal>
-          <ActionBar.Positioner>
-            <ActionBar.Content>
-              <ActionBar.SelectionTrigger>
+          <ActionBar.Positioner zIndex={2}>
+            <ActionBar.Content bg={bg} color={color}>
+              <ActionBar.SelectionTrigger borderColor={color}>
                 {selection.length} selected
               </ActionBar.SelectionTrigger>
-              <ActionBar.Separator />
-              <Button variant="outline" size="sm">
-                Delete <Kbd>⌫</Kbd>
-              </Button>
-              <Button variant="outline" size="sm">
-                Share <Kbd>T</Kbd>
+              <ActionBar.Separator bg={color} />
+              <Button
+                variant="outline"
+                size="sm"
+                colorPalette={"red"}
+                onClick={onOpen}
+              >
+                Delete <BsTrash size={17} />
               </Button>
             </ActionBar.Content>
           </ActionBar.Positioner>
@@ -259,7 +271,7 @@ const CategoriesTable = () => {
         }
         title={"Are you sure to remove this category?"}
         okText={{ icon: <BsTrash size={17} />, text: "Delete" }}
-        onDeleteHandler={() => onDeleteHandler(clickedCategoryId)}
+        onDeleteHandler={onDeleteSelectedCategories}
         isLoading={isDeleting}
       />
       <ModalDialog

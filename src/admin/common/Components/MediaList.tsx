@@ -89,7 +89,7 @@ const MediaList = () => {
               <ActionBar.SelectionTrigger borderColor={color}>
                 {selection.length} selected
               </ActionBar.SelectionTrigger>
-              <ActionBar.Separator />
+              <ActionBar.Separator bg={color} />
               <Button
                 variant="outline"
                 size="sm"

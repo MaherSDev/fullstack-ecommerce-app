@@ -23,7 +23,6 @@ import {
   Image,
   Input,
   InputGroup,
-  Kbd,
   NativeSelect,
   NumberInput,
   Portal,
@@ -57,6 +56,8 @@ const ProductsTable = () => {
   };
 
   const border = useColorModeValue("gray.200", "gray.500");
+  const bg = useColorModeValue("gray.300", "gray.800");
+  const color = useColorModeValue("gray.800", "gray.100");
   const [selection, setSelection] = useState<string[]>([]);
   const [clickedProductId, setClickedProductId] = useState<string>("");
 
@@ -154,13 +155,21 @@ const ProductsTable = () => {
     }
   };
 
+  const onDeleteSelectedProducts = () => {
+    if (selection.length) {
+      selection.forEach((id) => onDeleteHandler(id));
+      return setSelection([]);
+    }
+    onDeleteHandler(clickedProductId);
+  };
+
   const hasSelection = selection.length > 0;
   const indeterminate = hasSelection && selection.length < data.data.length;
 
   const rows = data?.data.map((product: IProduct) => (
     <Table.Row
       key={product.id}
-      data-selected={selection.includes(product.title) ? "" : undefined}
+      data-selected={selection.includes(product.documentId) ? "" : undefined}
     >
       <Table.Cell>
         <Checkbox.Root
@@ -172,7 +181,7 @@ const ProductsTable = () => {
             setSelection((prev) =>
               changes.checked
                 ? [...prev, product.documentId]
-                : selection.filter((name) => name !== product.documentId),
+                : selection.filter((id) => id !== product.documentId),
             );
           }}
         >
@@ -299,20 +308,21 @@ const ProductsTable = () => {
         </Table.Header>
         <Table.Body>{rows}</Table.Body>
       </Table.Root>
-
       <ActionBar.Root open={hasSelection}>
         <Portal>
-          <ActionBar.Positioner>
-            <ActionBar.Content>
-              <ActionBar.SelectionTrigger>
+          <ActionBar.Positioner zIndex={2}>
+            <ActionBar.Content bg={bg} color={color}>
+              <ActionBar.SelectionTrigger borderColor={color}>
                 {selection.length} selected
               </ActionBar.SelectionTrigger>
-              <ActionBar.Separator />
-              <Button variant="outline" size="sm">
-                Delete <Kbd>⌫</Kbd>
-              </Button>
-              <Button variant="outline" size="sm">
-                Share <Kbd>T</Kbd>
+              <ActionBar.Separator bg={color} />
+              <Button
+                variant="outline"
+                size="sm"
+                colorPalette={"red"}
+                onClick={onOpen}
+              >
+                Delete <BsTrash size={17} />
               </Button>
             </ActionBar.Content>
           </ActionBar.Positioner>
@@ -326,7 +336,7 @@ const ProductsTable = () => {
         }
         title={"Are you sure to remove this product?"}
         okText={{ icon: <BsTrash size={17} />, text: "Delete" }}
-        onDeleteHandler={() => onDeleteHandler(clickedProductId)}
+        onDeleteHandler={onDeleteSelectedProducts}
         isLoading={isDeleting}
       />
       <ModalDialog
