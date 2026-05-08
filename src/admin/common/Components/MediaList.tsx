@@ -1,4 +1,5 @@
 import {
+  useCreateDashboardMediaMutation,
   useDeleteDashboardMediaMutation,
   useGetDashboardMediaQuery,
 } from "@/app/services/media";
@@ -11,23 +12,31 @@ import {
   Box,
   Button,
   Checkbox,
+  FileUpload,
   Grid,
   HStack,
+  Icon,
   Image,
   Portal,
   Text,
   useDisclosure,
+  VStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { BsTrash } from "react-icons/bs";
+import { LuUpload } from "react-icons/lu";
 
 const MediaList = () => {
   const [selection, setSelection] = useState<number[]>([]);
+  const [file, setFile] = useState<File>();
+  const [uploadFile, setUploadFile] = useState(false);
   const { isLoading, data, error } = useGetDashboardMediaQuery({ page: 1 });
   const [
     deleteSelectedMedia,
     { isLoading: isDeleting, isSuccess: isSuccessDeleting },
   ] = useDeleteDashboardMediaMutation();
+  const [onCreateHandler, { isLoading: isUploading }] =
+    useCreateDashboardMediaMutation();
   const { open, onOpen, onClose } = useDisclosure();
   const bg = useColorModeValue("gray.100", "gray.800");
   const color = useColorModeValue("gray.800", "gray.100");
@@ -39,8 +48,29 @@ const MediaList = () => {
   }, [isSuccessDeleting, onClose]);
 
   const onDeleteHandler = () => {
-    if (selection.length)
-      return selection.forEach((id) => deleteSelectedMedia(id));
+    if (selection.length) {
+      selection.forEach((id) => deleteSelectedMedia(id));
+      return setSelection([]);
+    }
+    return;
+  };
+
+  const onUploadHandler = async () => {
+    if (file instanceof File) {
+      const formData = new FormData();
+      formData.append("files", file);
+      formData.append(
+        "fileInfo",
+        JSON.stringify({
+          alternativeText: file.name.replace(/\.[^/.]+$/, ""),
+        }),
+      );
+      const { data } = await onCreateHandler(formData);
+      if (data) {
+        setFile(undefined);
+      }
+    }
+
     return;
   };
 
@@ -59,7 +89,7 @@ const MediaList = () => {
               <ActionBar.SelectionTrigger borderColor={color}>
                 {selection.length} selected
               </ActionBar.SelectionTrigger>
-              <ActionBar.Separator />
+              <ActionBar.Separator bg={color} />
               <Button
                 variant="outline"
                 size="sm"
@@ -83,6 +113,76 @@ const MediaList = () => {
         onDeleteHandler={onDeleteHandler}
         isLoading={isDeleting}
       />
+      <VStack alignItems={"flex-start"}>
+        {!uploadFile ? (
+          <Button
+            variant="solid"
+            colorPalette="blue"
+            onClick={() => {
+              setUploadFile(true);
+            }}
+          >
+            Upload Image
+          </Button>
+        ) : (
+          <>
+            <FileUpload.Root
+              h="260px"
+              maxW="full"
+              alignItems="stretch"
+              accept={{ "image/*": [".png", ".jpg", ".jpeg"] }}
+              onFileAccept={({ files }) => {
+                const file = files?.[0];
+                if (!file) return;
+                setFile(file);
+              }}
+            >
+              <FileUpload.HiddenInput />
+
+              <FileUpload.Dropzone>
+                <FileUpload.DropzoneContent>
+                  {file ? (
+                    <Image
+                      src={URL.createObjectURL(file)}
+                      alt="thumbnail"
+                      h="260px"
+                      objectFit="cover"
+                    />
+                  ) : (
+                    <>
+                      <Icon size="md" color="fg.muted">
+                        <LuUpload />
+                      </Icon>
+                      <Box>Drag and drop files here</Box>
+                      <Box color="fg.muted">.png, .jpg up to 5MB</Box>
+                    </>
+                  )}
+                </FileUpload.DropzoneContent>
+              </FileUpload.Dropzone>
+            </FileUpload.Root>
+            <HStack w={"full"} justifyContent={"center"}>
+              <Button
+                variant="solid"
+                colorPalette="red"
+                onClick={() => {
+                  setUploadFile(false);
+                  setFile(undefined);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="solid"
+                colorPalette="blue"
+                onClick={onUploadHandler}
+                loading={isUploading}
+              >
+                Upload
+              </Button>
+            </HStack>
+          </>
+        )}
+      </VStack>
       <HStack position={"absolute"} top={5} right={2}>
         {hasSelection && (
           <Checkbox.Root

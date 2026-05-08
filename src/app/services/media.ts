@@ -22,7 +22,7 @@ export const MediaApiSlice = createApi({
       providesTags: ["Media"],
     }),
     createDashboardMedia: build.mutation({
-      query: ({ body }) => {
+      query: ( body ) => {
         return {
           url: `upload`,
           method: "POST",
