@@ -1,10 +1,15 @@
 import type { ReactNode } from "react";
 
-export interface INavLinks {
+interface ISidebarLinks {
   label: string;
   path: string;
   icon?: ReactNode;
   page?: ReactNode;
+}
+
+export interface INavLinks {
+  topMenu: ISidebarLinks[];
+  bottomMenu: ISidebarLinks[];
 }
 
 export interface LoginFormFields {

@@ -3,8 +3,8 @@ import CategoriesTable from "../common/Components/CategoriesTable";
 
 const ManageCategories = () => {
   return (
-    <Box>
-      <Heading as="h1" size={"xl"} my={4}>
+    <Box p={1}>
+      <Heading as="h1" fontSize="2xl" fontWeight="bold" mb={10}>
         Categories
       </Heading>
       <CategoriesTable />

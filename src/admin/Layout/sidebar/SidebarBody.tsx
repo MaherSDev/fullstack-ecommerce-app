@@ -1,36 +1,83 @@
 import { SidebarContent } from "@/admin/common/constants";
 import { useColorModeValue } from "@/components/ui/color-mode";
-import { IconButton, Link, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Icon,
+  Link,
+  Separator,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 
 const SidebarBody = () => {
-  const color = useColorModeValue("blue.500", "blue.500");
+  const hoverColor = useColorModeValue("blue.900", "blue.600");
   return (
-    <VStack pl={3} pt={2}>
-      {SidebarContent.map(({ label, path, icon }, key) => (
-        <Link
-          key={key}
-          as={RouterLink}
-          to={path}
-          fontWeight={"medium"}
-          rounded={"md"}
-          outline="none"
-          _hover={{
-            textDecoration: "none",
-            color,
-          }}
-          textAlign={"left"}
-          w={"full"}
-        >
-          <IconButton aria-label={label} variant={"ghost"}>
-            {icon}
-          </IconButton>
-          <Text textStyle="lg" fontWeight="medium">
-            {label}
-          </Text>
-        </Link>
-      ))}
-    </VStack>
+    <Box pt={2}>
+      <VStack px={3} gap={0}>
+        {SidebarContent.topMenu.map(({ label, path, icon }, key) => (
+          <Link
+            key={key}
+            as={RouterLink}
+            to={path}
+            fontWeight={"medium"}
+            rounded={"md"}
+            outline="none"
+            transition={"all .1s ease-in"}
+            _hover={{
+              textDecoration: "none",
+              bg: hoverColor,
+            }}
+            textAlign={"left"}
+            w={"full"}
+            color={"gray.100"}
+            p={2}
+          >
+            <Icon color={"inherit"} aria-label={label} size={"md"} mr={2}>
+              {icon}
+            </Icon>
+            <Text textStyle="lg" fontWeight="medium">
+              {label}
+            </Text>
+          </Link>
+        ))}
+      </VStack>
+      <Separator
+        borderColor={"gray.100"}
+        variant="solid"
+        my={4}
+        w={"80%"}
+        mx={"auto"}
+      />
+      <VStack px={3} gap={0}>
+        {SidebarContent.bottomMenu.map(({ label, path, icon }, key) => (
+          <Link
+            key={key}
+            as={RouterLink}
+            to={path}
+            fontWeight={"medium"}
+            rounded={"md"}
+            outline="none"
+            transition={"all .1s ease-in"}
+            _hover={{
+              textDecoration: "none",
+              bg: hoverColor,
+            }}
+            textAlign={"left"}
+            w={"full"}
+            color={"gray.100"}
+            p={2}
+          >
+            <Icon color={"inherit"} aria-label={label} size={"md"} mr={2}>
+              {icon}
+            </Icon>
+            <Text textStyle="lg" fontWeight="medium">
+              {label}
+            </Text>
+          </Link>
+        ))}
+      </VStack>
+    </Box>
   );
 };
 

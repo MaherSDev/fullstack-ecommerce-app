@@ -50,7 +50,7 @@ export default function AdminNavbar() {
                     Admin
                   </Text>
                 </VStack>
-                <Icon>
+                <Icon alignSelf={"start"}>
                   <IoIosArrowDown />
                 </Icon>
               </HStack>
