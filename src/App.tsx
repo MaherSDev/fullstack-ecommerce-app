@@ -10,7 +10,6 @@ import LoginPage from "@/pages/Login";
 import ProtectedRoute from "@/layout/ProtectedRoutes";
 import { CartDrawer } from "./components/CartDrawer";
 import Dashboard from "./admin/pages/Dashboard";
-import type { INavLinks } from "./interfaces";
 import { SidebarContent } from "./admin/common/constants";
 
 function App() {
@@ -28,9 +27,11 @@ function App() {
         <Route path="/admin" element={<ProtectedRoute />}>
           <Route element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
-            {SidebarContent.map(({ path, page }: INavLinks, key) => (
-              <Route path={path} element={page} key={key} />
-            ))}
+            {[...SidebarContent.topMenu, ...SidebarContent.bottomMenu].map(
+              ({ path, page }, key) => (
+                <Route path={path} element={page} key={key} />
+              ),
+            )}
           </Route>
         </Route>
 
