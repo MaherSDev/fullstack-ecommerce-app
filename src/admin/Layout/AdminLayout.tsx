@@ -4,9 +4,7 @@ import Sidebar from "./sidebar/Sidebar";
 import AdminNavbar from "./AdminNavbar";
 import { useColorModeValue } from "@/components/ui/color-mode";
 
-interface IProps {}
-
-const AdminLayout = ({}: IProps) => {
+const AdminLayout = () => {
   const bg = useColorModeValue("blue.600", "blue.900");
 
   return (

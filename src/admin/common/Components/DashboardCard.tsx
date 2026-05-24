@@ -15,7 +15,7 @@ const DashboardCard = ({ children, title, path, ...arg }: IProps ) => {
   return (
     <Card.Root
       borderRadius="2xl"
-      _hover={{ bg: hoverBg, scale: 1.05 }}
+      _hover={{ bg: hoverBg, scale: 1.02 }}
       transition={"all .1s ease-in"}
       {...arg}
     >

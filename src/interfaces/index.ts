@@ -27,6 +27,16 @@ export interface IUserData {
   documentId: string;
   username: string;
   email: string;
+  fullName: string;
+  shipping_address_state: string;
+  confirmed: boolean;
+  blocked: boolean;
+  role: {
+    id: number;
+    name: string;
+    type: string;
+  };
+  avatar: IThumbnail;
 }
 
 export interface IThumbnail {

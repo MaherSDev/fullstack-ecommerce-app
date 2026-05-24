@@ -34,7 +34,7 @@ const StatusCard = ({
       borderRadius="2xl"
       transition={"all .1s ease-in"}
       boxShadow="sm"
-      _hover={{ bg: hoverBg, scale: 1.07 }}
+      _hover={{ bg: hoverBg, scale: 1.05 }}
     >
       <Card.Body p={4}>
         <HStack>

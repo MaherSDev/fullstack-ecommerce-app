@@ -1,25 +1,24 @@
 import {
-  Box,
   Flex,
-  Button,
   Avatar,
-  Center,
   Menu,
   Portal,
   HStack,
   Text,
   VStack,
-  Icon,
   IconButton,
 } from "@chakra-ui/react";
 import { useColorMode } from "../../components/ui/color-mode";
 import { FiMoon, FiSun } from "react-icons/fi";
-import { IoMdNotificationsOutline, IoIosArrowDown } from "react-icons/io";
+import { IoMdNotificationsOutline } from "react-icons/io";
 import CookieService from "@/services/CookieService";
+import { useOutletContext } from "react-router-dom";
+import type { IUserData } from "@/interfaces";
 
 export default function AdminNavbar() {
   const { colorMode, toggleColorMode } = useColorMode();
   const token = CookieService.get("jwt");
+  const user = useOutletContext<IUserData>();
 
   const logoutHandler = () => {
     CookieService.remove("jwt");
@@ -27,52 +26,63 @@ export default function AdminNavbar() {
   };
 
   return (
-    <Flex h={"full"} align={"center"} justify="flex-end">
+    <Flex h={"full"} align={"center"} justify="flex-end" gap={2}>
       {/* Dark Mode */}
-      <Button onClick={toggleColorMode} size="md" variant={"ghost"} rounded={"full"}>
+      <IconButton
+        onClick={toggleColorMode}
+        size="md"
+        variant={"ghost"}
+        rounded={"full"}
+      >
         {colorMode === "light" ? <FiMoon /> : <FiSun />}
-      </Button>
+      </IconButton>
       <IconButton p={"none"} size="md" variant={"ghost"} rounded={"full"}>
         <IoMdNotificationsOutline />
       </IconButton>
       {token && (
         <Menu.Root>
           <Menu.Trigger asChild h={"auto"}>
-            <Button variant="ghost" outline="none">
-              <HStack py={1}>
-                <Avatar.Root size="sm">
-                  <Avatar.Image src="https://api.dicebear.com/9.x/toon-head/svg?seed=Maria" />
-                  <Avatar.Fallback name="Username" />
-                </Avatar.Root>
-                <VStack align={"left"} textAlign={"left"}>
-                  <Text>Admin Name</Text>
-                  <Text textStyle={"xs"} fontWeight={"normal"}>
-                    Admin
-                  </Text>
-                </VStack>
-                <Icon alignSelf={"start"}>
-                  <IoIosArrowDown />
-                </Icon>
-              </HStack>
-            </Button>
+            <IconButton
+              variant="plain"
+              outline="none"
+              size="md"
+              mx={2}
+            >
+              <Avatar.Root >
+                <Avatar.Image
+                  src={`${import.meta.env.VITE_SERVER_URL}${user.avatar.url}`}
+                />
+                <Avatar.Fallback name={user.username} />
+              </Avatar.Root>
+            </IconButton>
           </Menu.Trigger>
 
           <Portal>
             <Menu.Positioner>
-              <Menu.Content>
-                <Center py="4">
-                  <Avatar.Root size="sm">
-                    <Avatar.Image src="https://api.dicebear.com/9.x/toon-head/svg?seed=Maria" />
-                    <Avatar.Fallback name="Username" />
-                  </Avatar.Root>
-                </Center>
-
-                <Center pb="3">
-                  <Box fontSize="sm" fontWeight="medium">
-                    Username
-                  </Box>
-                </Center>
-
+              <Menu.Content minW={"200px"}>
+                <Menu.Item value="userData" justifyContent={"uset"}>
+                  <HStack py={1}>
+                    <Avatar.Root boxSize="80px">
+                      <Avatar.Image
+                        src={`${import.meta.env.VITE_SERVER_URL}${user.avatar.url}`}
+                      />
+                      <Avatar.Fallback name={user.username} />
+                    </Avatar.Root>
+                    <VStack align={"left"} textAlign={"left"}>
+                      <Text>{user.fullName}</Text>
+                      <Text
+                        color="fg.muted"
+                        textStyle="sm"
+                        maxInlineSize={"160px"}
+                        overflow={"hidden"}
+                        textOverflow={"ellipsis"}
+                        whiteSpace={"nowrap"}
+                      >
+                        {user.email}
+                      </Text>
+                    </VStack>
+                  </HStack>
+                </Menu.Item>
                 <Menu.Separator />
 
                 <Menu.Item value="account">My Account</Menu.Item>

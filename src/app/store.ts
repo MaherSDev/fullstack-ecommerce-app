@@ -7,6 +7,7 @@ import storage from "redux-persist/lib/storage";
 import { ProductsApiSlice } from "./services/products";
 import { CategoriesApiSlice } from "./services/categories";
 import { MediaApiSlice } from "./services/media";
+import { UsersApiSlice } from "./services/user";
 
 const resolvedStorage =
   (storage as unknown as { default?: typeof storage }).default ?? storage;
@@ -22,6 +23,7 @@ export const store = configureStore({
     cart: persistedCart,
     login: loginSlice,
     global: globalSlice,
+    [UsersApiSlice.reducerPath]: UsersApiSlice.reducer,
     [ProductsApiSlice.reducerPath]: ProductsApiSlice.reducer,
     [CategoriesApiSlice.reducerPath]: CategoriesApiSlice.reducer,
     [MediaApiSlice.reducerPath]: MediaApiSlice.reducer,
@@ -38,7 +40,12 @@ export const store = configureStore({
           "persist/PURGE",
         ],
       },
-    }).concat([ProductsApiSlice.middleware], [CategoriesApiSlice.middleware], [MediaApiSlice.middleware]),
+    }).concat(
+      [ProductsApiSlice.middleware],
+      [CategoriesApiSlice.middleware],
+      [MediaApiSlice.middleware],
+      [UsersApiSlice.middleware],
+    ),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

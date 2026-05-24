@@ -47,7 +47,8 @@ export default function LoginPage() {
     e?.preventDefault();
     const res = await dispatch(userLogin(data));
     if (userLogin.fulfilled.match(res)) {
-      const { user, jwt } = res.payload;
+      const data = res.payload;
+      console.log("login page: ", data);
       const from = location.state?.from || "/";
       navigate(from, { replace: true });
     }
