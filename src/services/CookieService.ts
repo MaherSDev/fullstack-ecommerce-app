@@ -15,6 +15,4 @@ class CookieService {
   }
 }
 
-console.log(cookies)
-
 export default new CookieService();

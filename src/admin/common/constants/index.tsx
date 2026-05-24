@@ -51,12 +51,6 @@ export const SidebarContent: INavLinks = {
       page: <div>Users</div>,
     },
     {
-      label: "Customers",
-      path: "customers",
-      icon: <FiUser />,
-      page: <div>Customers</div>,
-    },
-    {
       label: "Media",
       path: "media",
       icon: <FiImage />,
@@ -229,7 +223,7 @@ export const topSalesProducts = [
       id: 44,
       name: "cat_img7.png",
       alternativeText: "Bluetooth Speaker",
-      url: "/uploads/cat_img7_5193f31832.png",
+      url: "/uploads/cat_img7_5193f31832_64baaf98cf.png",
     },
   },
   {
