@@ -1,15 +1,21 @@
-import { Box } from "@chakra-ui/react";
+import { AbsoluteCenter, Box, Spinner } from "@chakra-ui/react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import CookieService from "@/services/CookieService";
 import { useGetDashboardSingleUserQuery } from "@/app/services/user";
 
 const ProtectedRoute = () => {
   const token = CookieService.get("jwt");
-  const { isLoading, data } = useGetDashboardSingleUserQuery("");
+  const { isLoading, data, isError, error } =
+    useGetDashboardSingleUserQuery("");
   const location = useLocation();
 
-  console.log(data);
-  if(isLoading) return <Box>Loading...</Box>;
+  if (isLoading)
+    return (
+      <AbsoluteCenter>
+        <Spinner size="xl" />
+      </AbsoluteCenter>
+    );
+  if (isError && error.status !== 401) return <AbsoluteCenter>Network</AbsoluteCenter>;
 
   if (!token) {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
@@ -19,9 +25,9 @@ const ProtectedRoute = () => {
   }
 
   return (
-      <Box>
-        <Outlet context={data}/>
-      </Box>
+    <Box>
+      <Outlet context={data} />
+    </Box>
   );
 };
 

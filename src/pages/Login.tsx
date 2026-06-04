@@ -48,7 +48,6 @@ export default function LoginPage() {
     const res = await dispatch(userLogin(data));
     if (userLogin.fulfilled.match(res)) {
       const data = res.payload;
-      console.log("login page: ", data);
       const from = location.state?.from || "/";
       navigate(from, { replace: true });
     }
@@ -123,7 +122,7 @@ export default function LoginPage() {
                       message: "Password must be at least 6 characters",
                     },
                   })}
-                  borderColor={`${errors.identifier ? "red" : border}`}
+                  borderColor={`${errors.password ? "red" : border}`}
                 />
               </InputGroup>
               <Field.ErrorText>{errors.password?.message}</Field.ErrorText>

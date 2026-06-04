@@ -26,17 +26,32 @@ export interface IUserData {
   id: number;
   documentId: string;
   username: string;
+  password: string;
   email: string;
   fullName: string;
-  shipping_address_state: string;
   confirmed: boolean;
   blocked: boolean;
-  role: {
-    id: number;
-    name: string;
-    type: string;
-  };
+  role: IRole;
   avatar: IThumbnail;
+  address: IAddress;
+  createdAt: string;
+}
+
+export interface IRole {
+  id: number;
+  name: string;
+  type: string;
+}
+
+export interface IAddress {
+  documentId: string;
+  id: number;
+  city: string;
+  country: string;
+  postalCode: number;
+  streetAddress: string;
+  state: string;
+  users: IUserData[];
 }
 
 export interface IThumbnail {
