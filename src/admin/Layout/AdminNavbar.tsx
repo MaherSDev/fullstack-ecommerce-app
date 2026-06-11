@@ -50,9 +50,9 @@ export default function AdminNavbar() {
             >
               <Avatar.Root >
                 <Avatar.Image
-                  src={`${import.meta.env.VITE_SERVER_URL}${user.avatar.url}`}
+                  src={`${import.meta.env.VITE_SERVER_URL}${user?.avatar?.url}`}
                 />
-                <Avatar.Fallback name={user.username} />
+                <Avatar.Fallback name={user?.fullName} />
               </Avatar.Root>
             </IconButton>
           </Menu.Trigger>
@@ -64,12 +64,12 @@ export default function AdminNavbar() {
                   <HStack py={1}>
                     <Avatar.Root boxSize="80px">
                       <Avatar.Image
-                        src={`${import.meta.env.VITE_SERVER_URL}${user.avatar.url}`}
+                        src={`${import.meta.env.VITE_SERVER_URL}${user?.avatar?.url}`}
                       />
-                      <Avatar.Fallback name={user.username} />
+                      <Avatar.Fallback name={user?.fullName} />
                     </Avatar.Root>
                     <VStack align={"left"} textAlign={"left"}>
-                      <Text>{user.fullName}</Text>
+                      <Text>{user?.fullName}</Text>
                       <Text
                         color="fg.muted"
                         textStyle="sm"
@@ -78,7 +78,7 @@ export default function AdminNavbar() {
                         textOverflow={"ellipsis"}
                         whiteSpace={"nowrap"}
                       >
-                        {user.email}
+                        {user?.email}
                       </Text>
                     </VStack>
                   </HStack>

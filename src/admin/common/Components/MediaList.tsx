@@ -183,7 +183,7 @@ const MediaList = () => {
           </>
         )}
       </VStack>
-      <HStack position={"absolute"} top={5} right={2}>
+      <HStack position={"absolute"} top={20} right={10}>
         {hasSelection && (
           <Checkbox.Root
             className="checkbox-wrapper-4"

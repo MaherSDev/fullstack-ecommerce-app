@@ -10,15 +10,9 @@ export const UsersApiSlice = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_APi_URL }),
   endpoints: (build) => ({
     getDashboardUsers: build.query({
-      query: (arg) => {
-        const { page = 1 } = arg;
+      query: () => {
         return {
-          url: `users?pagination[page]=${page}&pagination[pageSize]=10`,
-          method: "GET",
-          params: {
-            "populate[0]": "avatar",
-            "populate[1]": "role",
-          },
+          url: `users?populate=role&populate=avatar`,
           headers: {
             Authorization: `Bearer ${CookieService.get("jwt")}`,
           },
@@ -30,7 +24,6 @@ export const UsersApiSlice = createApi({
       query: () => {
         return {
           url: `users/me?populate=role&populate=address&populate=avatar`,
-          method: "GET",
           headers: {
             Authorization: `Bearer ${CookieService.get("jwt")}`,
           },
@@ -39,9 +32,9 @@ export const UsersApiSlice = createApi({
       providesTags: ["Users"],
     }),
     updateDashboardUser: build.mutation({
-      query: ({ documentId, body }) => {
+      query: ({ id, body }) => {
         return {
-          url: `users/${documentId}`,
+          url: `users/${id}`,
           method: "PUT",
           headers: {
             Authorization: `Bearer ${CookieService.get("jwt")}`,
@@ -51,7 +44,7 @@ export const UsersApiSlice = createApi({
         };
       },
       async onQueryStarted(
-        { documentId, ...patch },
+        { id, ...patch },
         { dispatch, queryFulfilled },
       ) {
         const patchResult = dispatch(
@@ -60,7 +53,7 @@ export const UsersApiSlice = createApi({
             { page: 1 },
             (draft) => {
               const user = draft.data.find(
-                (user: IUserData) => user.documentId === documentId,
+                (user: IUserData) => user.id === id,
               );
 
               if (user) {
@@ -82,7 +75,7 @@ export const UsersApiSlice = createApi({
     createDashboardUser: build.mutation({
       query: ({ body }) => {
         return {
-          url: `auth/local/register`,
+          url: `users`,
           method: "POST",
           headers: {
             Authorization: `Bearer ${CookieService.get("jwt")}`,
@@ -94,9 +87,9 @@ export const UsersApiSlice = createApi({
       invalidatesTags: ["Users"],
     }),
     deleteDashboardUser: build.mutation({
-      query: (documentId) => {
+      query: (id) => {
         return {
-          url: `users/${documentId}`,
+          url: `users/${id}`,
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${CookieService.get("jwt")}`,

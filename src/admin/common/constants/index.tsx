@@ -1,6 +1,7 @@
 import Dashboard from "@/admin/pages/Dashboard";
 import ManageCategories from "@/admin/pages/ManageCategories";
 import ManageProducts from "@/admin/pages/ManageProducts";
+import ManageUsers from "@/admin/pages/ManageUsers";
 import Media from "@/admin/pages/Media";
 import type { INavLinks } from "@/interfaces";
 import {
@@ -48,7 +49,7 @@ export const SidebarContent: INavLinks = {
       label: "Users",
       path: "users",
       icon: <FiUsers />,
-      page: <div>Users</div>,
+      page: <ManageUsers />,
     },
     {
       label: "Media",

@@ -216,16 +216,19 @@ const ProductsTable = () => {
       <Table.Cell>${product.price}</Table.Cell>
       <Table.Cell>{product.stock}</Table.Cell>
       <Table.Cell>
-        <IconButton
-          as={Link}
+        <Link
+          target={"_blank"}
+          rel="noopener noreferrer"
           to={`/products/${product.documentId}`}
-          variant="solid"
-          colorPalette={"purple"}
-          mr={3}
-          onClick={() => {}}
         >
-          <AiOutlineEye size={17} />
-        </IconButton>
+          <IconButton
+            variant="solid"
+            colorPalette={"purple"}
+            mr={3}
+          >
+            <AiOutlineEye size={17} />
+          </IconButton>
+        </Link>
         <IconButton
           variant="solid"
           colorPalette={"red"}

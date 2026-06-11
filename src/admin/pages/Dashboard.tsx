@@ -333,8 +333,8 @@ const DashboardContent = () => {
                 </PieChart>
               </Chart.Root>
               <List.Root as="ol" variant="plain">
-                {categoriesChart.data.slice(0, 6).map((cat) => (
-                  <List.Item key={cat.value} my={2}>
+                {categoriesChart.data.slice(0, 6).map((cat, index) => (
+                  <List.Item key={index} my={2}>
                     <HStack gap="2" w={"full"} justifyContent={"space-between"}>
                       <HStack>
                         <Box

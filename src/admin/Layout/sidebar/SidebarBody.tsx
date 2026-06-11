@@ -12,7 +12,7 @@ const SidebarBody = () => {
     <Box pt={2}>
       <VStack px={3} gap={0}>
         {SidebarContent.topMenu.map(({ label, path, icon }, key) => {
-          if (path === "users" && {...user}?.role?.type !== "admin") return null;
+          if (path === "users" && !["super_admin", "admin"].includes(user?.role.type)) return null;
           return (
             <Link
               key={key}

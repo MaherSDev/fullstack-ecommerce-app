@@ -24,7 +24,6 @@ export const CartDrawer = () => {
     dispatch(onCloseCartDrawerAction());
   };
 
-  console.log(cartProducts);
   return (
     <Drawer.Root
       open={isOpenCartDrawer}
@@ -36,7 +35,7 @@ export const CartDrawer = () => {
         <Drawer.Backdrop />
         <Drawer.Positioner>
           <Drawer.Content>
-            <Drawer.Header> 
+            <Drawer.Header>
               <Drawer.Title>Drawer Title</Drawer.Title>
             </Drawer.Header>
             <Drawer.Body spaceY={1}>

@@ -70,6 +70,12 @@ html {
   pointer-events: none;
   user-select: none;
 }
+table{
+  margin-block: 20px;
+}
+table tbody td{
+  padding: 5px 12px;
+}
 @media screen and (max-width: 640px) {
   .checkbox-wrapper-4 .cbx {
     width: 100%;
