@@ -8,6 +8,7 @@ import { ProductsApiSlice } from "./services/products";
 import { CategoriesApiSlice } from "./services/categories";
 import { MediaApiSlice } from "./services/media";
 import { UsersApiSlice } from "./services/user";
+import { AddressApiSlice } from "./services/address";
 
 const resolvedStorage =
   (storage as unknown as { default?: typeof storage }).default ?? storage;
@@ -27,6 +28,7 @@ export const store = configureStore({
     [ProductsApiSlice.reducerPath]: ProductsApiSlice.reducer,
     [CategoriesApiSlice.reducerPath]: CategoriesApiSlice.reducer,
     [MediaApiSlice.reducerPath]: MediaApiSlice.reducer,
+    [AddressApiSlice.reducerPath]: AddressApiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -45,6 +47,7 @@ export const store = configureStore({
       [CategoriesApiSlice.middleware],
       [MediaApiSlice.middleware],
       [UsersApiSlice.middleware],
+      [AddressApiSlice.middleware]
     ),
 });
 

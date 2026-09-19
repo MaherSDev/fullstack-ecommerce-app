@@ -38,9 +38,11 @@ const AlertDialog = ({
             <Dialog.Header>
               <Dialog.Title>{title}</Dialog.Title>
             </Dialog.Header>
-            <Dialog.Body>
-              <Text fontWeight={"normal"}>{description}</Text>
-            </Dialog.Body>
+            {description && (
+              <Dialog.Body>
+                <Text fontWeight={"normal"}>{description}</Text>
+              </Dialog.Body>
+            )}
             <Dialog.Footer>
               <Dialog.ActionTrigger asChild>
                 <Button variant="outline">

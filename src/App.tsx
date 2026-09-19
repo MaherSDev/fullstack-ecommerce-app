@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import HomePage from "@/pages";
-import AdminLayout from "@/admin/Layout/AdminLayout";
+import AdminLayout from "@/admin/layout/AdminLayout";
 import { Toaster } from "@/components/ui/toaster";
 import AppLayout from "@/layout/AppLayout";
 import LoginLayout from "@/layout/LoginLayout";

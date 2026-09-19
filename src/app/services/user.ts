@@ -12,7 +12,7 @@ export const UsersApiSlice = createApi({
     getDashboardUsers: build.query({
       query: () => {
         return {
-          url: `users?populate=role&populate=avatar`,
+          url: `users?populate=role&populate=avatar&populate=addresses`,
           headers: {
             Authorization: `Bearer ${CookieService.get("jwt")}`,
           },
@@ -23,7 +23,7 @@ export const UsersApiSlice = createApi({
     getDashboardSingleUser: build.query({
       query: () => {
         return {
-          url: `users/me?populate=role&populate=address&populate=avatar`,
+          url: `users/me?populate=role&populate=avatar&populate=addresses`,
           headers: {
             Authorization: `Bearer ${CookieService.get("jwt")}`,
           },

@@ -15,12 +15,20 @@ const ProtectedRoute = () => {
         <Spinner size="xl" />
       </AbsoluteCenter>
     );
-  if (isError && error.status !== 401) return <AbsoluteCenter>Network</AbsoluteCenter>;
+  if (isError && error.status !== 401)
+    return <AbsoluteCenter>Network</AbsoluteCenter>;
 
   if (!token) {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }
   if (token && data?.role?.type === "customer") {
+    return <Navigate to="/" replace state={{ from: location.pathname }} />;
+  }
+  if (
+    token &&
+    !["admin", "super_admin"].includes(data?.role?.type) &&
+    location.pathname === "/admin/users"
+  ) {
     return <Navigate to="/" replace state={{ from: location.pathname }} />;
   }
 

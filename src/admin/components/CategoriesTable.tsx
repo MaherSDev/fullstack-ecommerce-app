@@ -42,7 +42,6 @@ const CategoriesTable = () => {
     products: [],
   };
 
-  const border = useColorModeValue("gray.200", "gray.500");
   const bg = useColorModeValue("gray.300", "gray.800");
   const color = useColorModeValue("gray.800", "gray.100");
   const [selection, setSelection] = useState<string[]>([]);
@@ -281,6 +280,7 @@ const CategoriesTable = () => {
         okText={{ icon: <MdOutlineDownloadDone size={17} />, text: "Save" }}
         onSave={handleSubmit(handleSubmitCategory)}
         onClose={onCloseModal}
+				styles={{ h: "90%" }}
       >
         {/* Title */}
         <VStack flex={"1 60%"} gap={3}>
@@ -296,7 +296,7 @@ const CategoriesTable = () => {
                 },
                 onChange: onChangeHandler,
               })}
-              borderColor={`${errors.title ? "red" : border}`}
+              borderColor={`${errors.title ? "red" : "input-border"}`}
             />
             <Field.ErrorText>{errors.title?.message}</Field.ErrorText>
           </Field.Root>
@@ -313,7 +313,7 @@ const CategoriesTable = () => {
                 },
                 onChange: onChangeHandler,
               })}
-              borderColor={`${errors.description ? "red" : border}`}
+              borderColor={`${errors.description ? "red" : "input-border"}`}
             />
             <Field.ErrorText>{errors.description?.message}</Field.ErrorText>
           </Field.Root>

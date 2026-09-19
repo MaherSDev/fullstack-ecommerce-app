@@ -1,5 +1,5 @@
 import { Box, Heading } from "@chakra-ui/react";
-import UsersTable from "../common/Components/UsersTable";
+import UsersTable from "../components/UsersTable";
 
 const ManageUsers = () => {
   return (

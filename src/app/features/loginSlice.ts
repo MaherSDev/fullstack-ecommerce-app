@@ -37,7 +37,9 @@ export const userLogin = createAsyncThunk<
     const { data } = await axiosInstance.post("auth/local", user);
     return data;
   } catch (error: any) {
-    return rejectWithValue(error.response?.data?.message || "Login failed");
+    return rejectWithValue(
+      error.response?.data?.error?.message || "Login failed",
+    );
   }
 });
 

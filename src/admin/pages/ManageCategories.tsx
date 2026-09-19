@@ -1,5 +1,5 @@
 import { Box, Heading } from "@chakra-ui/react";
-import CategoriesTable from "../common/Components/CategoriesTable";
+import CategoriesTable from "../components/CategoriesTable";
 
 const ManageCategories = () => {
   return (

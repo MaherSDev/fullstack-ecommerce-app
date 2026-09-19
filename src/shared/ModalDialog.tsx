@@ -13,6 +13,7 @@ interface IProps {
   };
   onClose: () => void;
   onSave: () => void;
+  styles?: React.ComponentProps<typeof Dialog.Content>;
 }
 
 const ModalDialog = ({
@@ -22,7 +23,8 @@ const ModalDialog = ({
   title,
   onSave,
   onClose,
-  children
+  children,
+  styles,
 }: IProps) => {
   return (
     <Dialog.Root
@@ -35,11 +37,16 @@ const ModalDialog = ({
       <Dialog.Backdrop />
       <Portal>
         <Dialog.Positioner>
-          <Dialog.Content>
-            <Dialog.Header>
+          <Dialog.Content {...styles}>
+            <Dialog.Header borderBottom={"1px solid #eee"}>
               <Dialog.Title>{title}</Dialog.Title>
             </Dialog.Header>
-            <Dialog.Body>
+            <Dialog.Body
+              flex={"1 1"}
+              overflow={"auto"}
+              p={6}
+              scrollbarColor={"gray transparent"}
+            >
               {children}
             </Dialog.Body>
             <Dialog.Footer>
@@ -61,7 +68,7 @@ const ModalDialog = ({
               </Button>
             </Dialog.Footer>
             <Dialog.CloseTrigger asChild>
-              <CloseButton size="sm"/>
+              <CloseButton size="lg" />
             </Dialog.CloseTrigger>
           </Dialog.Content>
         </Dialog.Positioner>

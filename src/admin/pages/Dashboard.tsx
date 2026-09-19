@@ -41,8 +41,8 @@ import {
   topSalesProducts,
   users,
 } from "../common/constants";
-import DashboardCard from "../common/Components/DashboardCard";
-import StatusCard from "../common/Components/DashboardStatusCard";
+import DashboardCard from "../common/components/DashboardCard";
+import StatusCard from "../common/components/DashboardStatusCard";
 
 function CustomTooltip(props: Partial<TooltipContentProps<string, string>>) {
   const bg = useColorModeValue("white", "black");

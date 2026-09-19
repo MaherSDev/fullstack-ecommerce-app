@@ -183,42 +183,44 @@ const MediaList = () => {
           </>
         )}
       </VStack>
-      <HStack position={"absolute"} top={20} right={10}>
-        {hasSelection && (
-          <Checkbox.Root
-            className="checkbox-wrapper-4"
-            size="sm"
-            left="2"
-            aria-label="Select all rows"
-            checked={indeterminate}
-            onCheckedChange={(changes) => {
-              setSelection(
-                changes.checked ? data.map((img: IThumbnail) => img.id) : [],
-              );
-            }}
-          >
-            <Checkbox.HiddenInput className="inp-cbx" />
-            <Checkbox.Control className="cbx">
-              <Checkbox.Label>
-                <svg width="12px" height="10px">
-                  <use xlinkHref="#check-4"></use>
-                </svg>
-              </Checkbox.Label>
-            </Checkbox.Control>
-            <Text fontWeight={"medium"}>Select All</Text>
-            <svg className="inline-svg">
-              <symbol id="check-4" viewBox="0 0 12 10">
-                <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
-              </symbol>
-            </svg>
-          </Checkbox.Root>
-        )}
-      </HStack>
       <Grid
-        py={5}
+        pt={10}
+        pb={5}
         templateColumns={"repeat(auto-fit, minmax(200px, 200px))"}
         gap="2"
+				position={"relative"}
       >
+        <HStack position={"absolute"} top={0} right={10}>
+          {hasSelection && (
+            <Checkbox.Root
+              className="checkbox-wrapper-4"
+              size="sm"
+              left="2"
+              aria-label="Select all rows"
+              checked={indeterminate}
+              onCheckedChange={(changes) => {
+                setSelection(
+                  changes.checked ? data.map((img: IThumbnail) => img.id) : [],
+                );
+              }}
+            >
+              <Checkbox.HiddenInput className="inp-cbx" />
+              <Checkbox.Control className="cbx">
+                <Checkbox.Label>
+                  <svg width="12px" height="10px">
+                    <use xlinkHref="#check-4"></use>
+                  </svg>
+                </Checkbox.Label>
+              </Checkbox.Control>
+              <Text fontWeight={"medium"}>Select All</Text>
+              <svg className="inline-svg">
+                <symbol id="check-4" viewBox="0 0 12 10">
+                  <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                </symbol>
+              </svg>
+            </Checkbox.Root>
+          )}
+        </HStack>
         {data?.map((img: IThumbnail) => (
           <Box
             key={img.id}

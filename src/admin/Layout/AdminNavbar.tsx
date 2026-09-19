@@ -42,17 +42,16 @@ export default function AdminNavbar() {
       {token && (
         <Menu.Root>
           <Menu.Trigger asChild h={"auto"}>
-            <IconButton
-              variant="plain"
-              outline="none"
-              size="md"
-              mx={2}
-            >
-              <Avatar.Root >
-                <Avatar.Image
-                  src={`${import.meta.env.VITE_SERVER_URL}${user?.avatar?.url}`}
-                />
-                <Avatar.Fallback name={user?.fullName} />
+            <IconButton variant="plain" outline="none" size="md" mx={2}>
+              <Avatar.Root>
+                {user?.avatar ? (
+                  <Avatar.Image
+                    src={`${import.meta.env.VITE_SERVER_URL}${user?.avatar?.url}`}
+                    alt={user.avatar?.alternativeText}
+                  />
+                ) : (
+                  <Avatar.Fallback name={user.fullName} />
+                )}
               </Avatar.Root>
             </IconButton>
           </Menu.Trigger>

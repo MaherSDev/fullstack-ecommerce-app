@@ -55,7 +55,6 @@ const ProductsTable = () => {
     categories: [],
   };
 
-  const border = useColorModeValue("gray.200", "gray.500");
   const bg = useColorModeValue("gray.300", "gray.800");
   const color = useColorModeValue("gray.800", "gray.100");
   const [selection, setSelection] = useState<string[]>([]);
@@ -349,6 +348,7 @@ const ProductsTable = () => {
         okText={{ icon: <MdOutlineDownloadDone size={17} />, text: "Save" }}
         onSave={handleSubmit(handleSubmitProduct)}
         onClose={onCloseModal}
+				styles={{ h: "90%" }}
       >
         <HStack gap={6}>
           <VStack flex="1 40%">
@@ -458,7 +458,7 @@ const ProductsTable = () => {
                   },
                   onChange: onChangeHandler,
                 })}
-                borderColor={`${errors.title ? "red" : border}`}
+                borderColor={`${errors.title ? "red" : "input-border"}`}
               />
               <Field.ErrorText>{errors.title?.message}</Field.ErrorText>
             </Field.Root>
@@ -475,7 +475,7 @@ const ProductsTable = () => {
                   },
                   onChange: onChangeHandler,
                 })}
-                borderColor={`${errors.description ? "red" : border}`}
+                borderColor={`${errors.description ? "red" : "input-border"}`}
               />
               <Field.ErrorText>{errors.description?.message}</Field.ErrorText>
             </Field.Root>
@@ -505,7 +505,7 @@ const ProductsTable = () => {
                     <NumberInput.Control />
                     <InputGroup startElement={<LuDollarSign />}>
                       <NumberInput.Input
-                        borderColor={`${errors.price ? "red" : border}`}
+                        borderColor={`${errors.price ? "red" : "input-border"}`}
                       />
                     </InputGroup>
                   </NumberInput.Root>
@@ -538,7 +538,7 @@ const ProductsTable = () => {
                   >
                     <NumberInput.Control />
                     <NumberInput.Input
-                      borderColor={`${errors.stock ? "red" : border}`}
+                      borderColor={`${errors.stock ? "red" : "input-border"}`}
                     />
                   </NumberInput.Root>
                 )}

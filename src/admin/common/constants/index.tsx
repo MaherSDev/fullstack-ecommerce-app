@@ -3,7 +3,10 @@ import ManageCategories from "@/admin/pages/ManageCategories";
 import ManageProducts from "@/admin/pages/ManageProducts";
 import ManageUsers from "@/admin/pages/ManageUsers";
 import Media from "@/admin/pages/Media";
-import type { INavLinks } from "@/interfaces";
+import type { INavLinks, ISidebarLinks, IUserData } from "@/interfaces";
+import { FaRegUser  } from "react-icons/fa";
+import { BsShieldLock } from "react-icons/bs";
+import { SlLocationPin } from "react-icons/sl";
 import {
   FiBox,
   FiGrid,
@@ -17,6 +20,23 @@ import {
 
 const today = new Date();
 const dayInMs = 1000 * 60 * 60 * 24;
+
+export const USER_DEFAULT_VALUES: IUserData = {
+  id: 0,
+  documentId: "",
+  username: "",
+  password: "",
+  email: "",
+  fullName: "",
+  phoneNumber: "",
+  createdAt: "",
+  confirmed: false,
+  blocked: false,
+  role: {} as IUserData["role"],
+  avatar: {} as IUserData["avatar"],
+  addresses: null,
+  defaultAddress: {} as IUserData["defaultAddress"],
+};
 
 export const SidebarContent: INavLinks = {
   topMenu: [
@@ -73,6 +93,24 @@ export const SidebarContent: INavLinks = {
     },
   ],
 };
+
+export const UserSidebarLinks: ISidebarLinks[] = [
+  {
+    label: "General",
+    path: "general",
+    icon: <FaRegUser  />
+  },
+  {
+    label: "Address",
+    path: "address",
+    icon: <SlLocationPin />
+  },
+  {
+    label: "Login & Security",
+    path: "login-security",
+    icon: <BsShieldLock />
+  },
+];
 
 export const users = [
   {
@@ -183,7 +221,7 @@ export const orders = [
     orderNumber: "#ORD-1048",
     customer: "emily johnson",
     status: "completed",
-    cost: 1800.50,
+    cost: 1800.5,
     createdAt: "April 17, 2026",
   },
   {

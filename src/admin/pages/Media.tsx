@@ -1,5 +1,5 @@
 import { Box, Heading } from "@chakra-ui/react";
-import MediaList from "../common/Components/MediaList";
+import MediaList from "../common/components/MediaList";
 
 const Media = () => {
   return (
