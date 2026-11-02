@@ -15,15 +15,15 @@ const Products = () => {
     return data;
   };
 
-  const { isLoading, data, error } = useQuery({
+  const { isLoading, data } = useQuery({
     queryKey: ["products"],
     queryFn: getProductsList,
   });
 
   return (
     <Grid
-      margin={30}
-      templateColumns={"repeat(auto-fill, minmax(320px, 1fr))"}
+      marginBlock={30}
+      templateColumns={"repeat(auto-fill, minmax(220px, 1fr))"}
       gap={6}
     >
       {isLoading ? (

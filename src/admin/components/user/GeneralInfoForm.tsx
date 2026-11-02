@@ -1,4 +1,4 @@
-import UploadImage from "@/admin/common/components/ui/UploadImage";
+import UploadImage from "@/admin/common/Components/ui/UploadImage";
 import { USER_FORM_INPUTS } from "@/admin/common/constants/fromData";
 import type { IUserData } from "@/interfaces";
 import { Field, Input } from "@chakra-ui/react";
@@ -11,7 +11,10 @@ const GeneralInfoForm = () => {
   } = useFormContext<IUserData>();
   return (
     <>
-      <UploadImage fieldName="avatar" fallbackImage="fullName" />
+      <UploadImage
+        fieldName="avatar"
+        fallbackImage="fullName"
+      />
       {USER_FORM_INPUTS.map(({ name, label, placeholder, validation }) => {
         const fieldName = name as keyof IUserData;
         const fieldError = errors[fieldName];

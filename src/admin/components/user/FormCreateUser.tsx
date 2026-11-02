@@ -1,4 +1,4 @@
-import UploadImage from "@/admin/common/components/ui/UploadImage";
+import UploadImage from "@/admin/common/Components/ui/UploadImage";
 import { USER_FORM_INPUTS } from "@/admin/common/constants/fromData";
 import type { IUserData } from "@/interfaces";
 import {
@@ -24,7 +24,10 @@ const FormCreateUser = () => {
   return (
     <HStack gap={6}>
       <VStack flex={"1 40%"}>
-        <UploadImage fieldName="avatar" fallbackImage="fullName" />
+        <UploadImage
+          fieldName="avatar"
+          fallbackImage="fullName"
+        />
       </VStack>
       <VStack flex={"1 60%"} gap={3}>
         {USER_FORM_INPUTS.map(({ name, label, placeholder, validation }) => {

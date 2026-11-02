@@ -23,7 +23,7 @@ export const UsersApiSlice = createApi({
     getDashboardSingleUser: build.query({
       query: () => {
         return {
-          url: `users/me?populate=role&populate=avatar&populate=addresses`,
+          url: `users/me?populate=role&populate=avatar&populate=addresses&populate=cart`,
           headers: {
             Authorization: `Bearer ${CookieService.get("jwt")}`,
           },

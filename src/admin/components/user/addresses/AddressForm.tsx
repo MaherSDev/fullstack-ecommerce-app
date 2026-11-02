@@ -167,6 +167,7 @@ const AddressForm = ({
 
       try {
         const data = await getCitiesByCountries(selectedCountry.id);
+        console.log(data);
         if (isMounted) {
           setCities(data);
         }

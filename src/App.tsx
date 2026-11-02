@@ -8,9 +8,9 @@ import Products from "@/pages/ProductsPage";
 import ProductPage from "@/pages/Product";
 import LoginPage from "@/pages/Login";
 import ProtectedRoute from "@/layout/ProtectedRoutes";
-import { CartDrawer } from "./components/CartDrawer";
 import Dashboard from "./admin/pages/Dashboard";
 import { SidebarContent } from "./admin/common/constants";
+import Cart from "./pages/Cart";
 
 function App() {
   return (
@@ -19,6 +19,7 @@ function App() {
         {/** Public Routes */}
         <Route path="/" element={<AppLayout />}>
           <Route index element={<HomePage />} />
+          <Route path="/cart" element={<Cart />} />
           <Route path="/products" element={<Products />} />
           <Route path="/products/:documentId" element={<ProductPage />} />
         </Route>
@@ -41,7 +42,6 @@ function App() {
         </Route>
       </Routes>
 
-      <CartDrawer />
       <Toaster />
     </>
   );

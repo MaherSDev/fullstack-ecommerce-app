@@ -9,6 +9,18 @@ export const ProductsApiSlice = createApi({
   refetchOnMountOrArgChange: true,
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_APi_URL }),
   endpoints: (build) => ({
+    getSingleProduct: build.query({
+      query: (documentId) => {
+        return {
+          url: `products/${documentId}`,
+					params: {
+            "populate[0]": "thumbnail",
+            "populate[1]": "categories",
+          },
+          method: "Get",
+        };
+      },
+    }),
     getDashboardProducts: build.query({
       query: (arg) => {
         const { page = 1 } = arg;
@@ -93,6 +105,7 @@ export const ProductsApiSlice = createApi({
 });
 
 export const {
+	useGetSingleProductQuery,
   useGetDashboardProductsQuery,
   useDeleteDashboardProductsMutation,
   useUpdateDashboardProductsMutation,

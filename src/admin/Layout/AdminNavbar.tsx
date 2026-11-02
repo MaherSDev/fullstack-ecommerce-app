@@ -50,7 +50,7 @@ export default function AdminNavbar() {
                     alt={user.avatar?.alternativeText}
                   />
                 ) : (
-                  <Avatar.Fallback name={user.fullName} />
+                  <Avatar.Fallback name={user?.fullName} />
                 )}
               </Avatar.Root>
             </IconButton>

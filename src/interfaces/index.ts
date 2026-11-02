@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 
-
 export interface ISidebarLinks {
   label: string;
   path: string;
@@ -107,27 +106,56 @@ export interface IProduct {
   documentId: string;
   title: string;
   description: string;
+  sku: string;
   price: number;
+  discount: number;
   stock: number;
   thumbnail?: IThumbnail;
   categories: ICategory[];
 }
 export interface ICategory {
-  id: string;
-  documentId: string;
   title: string;
   description: string;
   products?: IProduct[];
 }
+
 export interface ICartItem {
-  data: [
-    {
-      documentId: string;
-      product: IProduct;
-      quantity: number;
-      totalPrice: number;
-    },
-  ];
+  documentId: string;
+  product: IProduct;
+  quantity: number;
+  discount: number;
+  totalPrice: number;
+  active: boolean;
+}
+export interface ICart {
+  data: ICartItem[];
   cartCost: number;
   totalQuantity: number;
+	selectedQuantity: number;
+  totalDiscount: number;
+}
+export interface IApiCart {
+  sessionId: string;
+  user?: IUserData | null;
+  cart_items: IApiCartItem[];
+}
+export interface IApiCartItem {
+  id: string;
+  documentId: string;
+  product: IProduct;
+  quantity: number;
+  price: number;
+  discount: number;
+  active: boolean;
+  cart: IApiCart | number;
+}
+
+export interface IErrorMessage {
+  error: {
+    response: {
+      data: {
+        message: string;
+      };
+    };
+  };
 }

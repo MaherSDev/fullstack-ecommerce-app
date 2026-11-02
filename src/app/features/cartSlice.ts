@@ -1,12 +1,16 @@
-import type { ICartItem, IProduct } from "@/interfaces";
+import type { IApiCartItem, ICart } from "@/interfaces";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
-import { shoppingCartQuantity, removeFromCart } from "@/utils";
 import { defaultCartData } from "@/constants";
 import { toaster } from "@/components/ui/toaster";
+import {
+  removeFromCart,
+  setActiveCartItem,
+  updateCartItemQuantity,
+} from "@/utils";
 
 interface ICartState {
-  cartProducts: ICartItem;
+  cartProducts: ICart;
 }
 
 const initialState: ICartState = {
@@ -17,36 +21,93 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addToCart: (state, action: PayloadAction<IProduct>) => {
-      state.cartProducts = shoppingCartQuantity(
-        action.payload,
+    setCartFromServer: (state, action: PayloadAction<IApiCartItem[]>) => {
+      const cartItems = action.payload;
+
+      const totalDiscount: number = cartItems.reduce(
+        (total, item) =>
+          total + item.price * item.quantity * (item.discount / 100),
+        0,
+      );
+
+      state.cartProducts = {
+        data: cartItems.map((cartItem) => ({
+          documentId: cartItem.documentId,
+          product: cartItem.product,
+          quantity: cartItem.quantity,
+          discount: cartItem.discount,
+          totalPrice: cartItem.quantity * cartItem.price,
+          active: cartItem.active,
+        })),
+
+        totalQuantity: cartItems.reduce(
+          (total, item) => total + item.quantity,
+          0,
+        ),
+        selectedQuantity: cartItems.reduce(
+          (total, item) => (!item.active ? total : total + item.quantity),
+          0,
+        ),
+        totalDiscount,
+        cartCost:
+          cartItems.reduce(
+            (total, item) =>
+              !item.active ? total : total + item.quantity * item.price,
+            0,
+          ) - totalDiscount,
+      };
+    },
+
+    activeCartItem: (
+      state,
+      action: PayloadAction<{ documentId: string; active: boolean }>,
+    ) => {
+      const { documentId, active } = action.payload;
+      state.cartProducts = setActiveCartItem(
+        documentId,
+        active,
         state.cartProducts,
       );
     },
-    removeCartItem: (state, action: PayloadAction<IProduct>) => {
+
+    changeCartItemQty: (
+      state,
+      action: PayloadAction<{ documentId: string; quantity: number }>,
+    ) => {
+      const { documentId, quantity } = action.payload;
+      state.cartProducts = updateCartItemQuantity(
+        documentId,
+        quantity,
+        state.cartProducts,
+      );
+    },
+
+    removeCartItem: (state, action: PayloadAction<string>) => {
       state.cartProducts = removeFromCart(action.payload, state.cartProducts);
     },
-    removeAllItems: (state) => {
-      if (state.cartProducts.totalQuantity <= 0) {
-        toaster.create({
-          title: "You don't have any product in your cart",
-          type: "info",
-          duration: 2000,
-          closable: true,
-        });
-        return;
-      }
+
+    clearCart: (state) => {
+      state.cartProducts = defaultCartData;
+
       toaster.create({
-        title: "Cleared successfully, your cart is empty now",
+        title: "Cart cleared",
+        description: "Your cart is empty now",
         type: "success",
         duration: 2000,
         closable: true,
       });
-      state.cartProducts = defaultCartData;
     },
   },
 });
 
 export const selectCart = ({ cart }: RootState) => cart;
-export const { addToCart, removeCartItem, removeAllItems } = cartSlice.actions;
+
+export const {
+  setCartFromServer,
+  activeCartItem,
+  changeCartItemQty,
+  removeCartItem,
+  clearCart,
+} = cartSlice.actions;
+
 export default cartSlice.reducer;

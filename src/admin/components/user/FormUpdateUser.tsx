@@ -1,7 +1,7 @@
 import { Button, Flex, VStack, Icon } from "@chakra-ui/react";
 import { useState } from "react";
 import GeneralInfoForm from "./GeneralInfoForm";
-import Address from "./addresses";
+import Address from "./Addresses";
 import LoginSecurityForm from "./LoginSecurityForm";
 import { UserSidebarLinks } from "@/admin/common/constants";
 import { useColorModeValue } from "@/components/ui/color-mode";

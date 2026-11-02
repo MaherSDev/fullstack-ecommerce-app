@@ -1,39 +1,17 @@
-import { Button, Card, Flex, Image, Text } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
+import { Button, Card, Image, Text, Box, HStack } from "@chakra-ui/react";
 import ProductSkeleton from "../components/ui/ProductSkeleton";
 import { useNavigate, useParams } from "react-router-dom";
 import { BsArrowLeft } from "react-icons/bs";
-import { useColorMode } from "../components/ui/color-mode";
-import axiosInstance from "@/api/axios.config";
-import { useDispatch } from "react-redux";
-import { addToCart } from "@/app/features/cartSlice";
-import { onOpenCartDrawerAction } from "@/app/features/globalSlice";
+import { useGetSingleProductQuery } from "@/app/services/products";
+import ProductSalePrice from "@/components/ui/ProductSalePrice";
 
 const ProductPage = () => {
-  const dispatch = useDispatch();
   const { documentId } = useParams();
   const navigate = useNavigate();
-  const { colorMode } = useColorMode();
 
-  const getProductData = async () => {
-    const { data } = await axiosInstance.get(`products/${documentId}`, {
-      params: {
-        populate: ["thumbnail", "categories"],
-      },
-    });
-    return data;
-  };
+  const { isLoading, data, error } = useGetSingleProductQuery(documentId);
 
-  const { isLoading, data, error } = useQuery({
-    queryKey: ["products", documentId],
-    queryFn: getProductData,
-  });
   const goBack = () => navigate(-1);
-
-  const cartHandler = () => {
-    dispatch(addToCart(data.data));
-    dispatch(onOpenCartDrawerAction());
-  };
 
   if (isLoading) return <ProductSkeleton />;
 
@@ -41,24 +19,24 @@ const ProductPage = () => {
     return <>Error</>;
   }
 
-  const { title, description, thumbnail, price } = data.data;
+  const { title, description, thumbnail, price, discount } = data.data;
 
   return (
-    <>
-      <Flex
+    <Box p={4} maxW={"lg"} mx={"auto"} h="full">
+      <Button
         alignItems={"center"}
-        maxW={"md"}
-        mx={"auto"}
-        my={7}
+        as="button"
+        variant={"ghost"}
+        _hover={{ bg: "transparent" }}
         fontSize={"lg"}
-        cursor={"pointer"}
+        p={0}
         onClick={goBack}
       >
         <BsArrowLeft />
-        <Text ml={2}>Back</Text>
-      </Flex>
+        Back
+      </Button>
       <Card.Root
-        maxW={"md"}
+        maxW={"lg"}
         mx={"auto"}
         padding={3}
         border={"1px solid gray"}
@@ -77,38 +55,10 @@ const ProductPage = () => {
         <Card.Body gap={2} mt={2} fontSize={"sm"}>
           <Card.Title>{title}</Card.Title>
           <Card.Description>{description}</Card.Description>
-          <Text
-            textStyle="2xl"
-            fontWeight="medium"
-            letterSpacing="tight"
-            mt="2"
-          >
-            ${price}
-          </Text>
+          <ProductSalePrice price={price} discount={discount} />
         </Card.Body>
-        <Card.Footer>
-          <Button
-            type="button"
-            bg={colorMode === "light" ? "#e6f3fd" : "#9f7aea"}
-            color={colorMode !== "light" ? "#e6f3fd" : "#9f7aea"}
-            variant="outline"
-            w={"full"}
-            border={"none"}
-            py={5}
-            mt={6}
-            overflow={"hidden"}
-            _hover={{
-              bg: colorMode !== "light" ? "#e6f3fd" : "#9f7aea",
-              color: colorMode == "light" ? "#e6f3fd" : "#9f7aea",
-              border: "none",
-            }}
-            onClick={cartHandler}
-          >
-            Add to cart
-          </Button>
-        </Card.Footer>
       </Card.Root>
-    </>
+    </Box>
   );
 };
 

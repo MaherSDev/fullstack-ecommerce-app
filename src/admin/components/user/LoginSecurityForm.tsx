@@ -69,6 +69,7 @@ const LoginSecurityForm = () => {
                   placeholder="Select option"
                   value={field.value?.id}
                   onChange={(e) => {
+                    console.log("changed role: ", e.target.value);
                     field.onChange(e.target.value);
                   }}
                   borderColor={`${errors.role ? "red" : "input-border"}`}

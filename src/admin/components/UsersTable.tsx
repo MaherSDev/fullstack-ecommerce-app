@@ -181,13 +181,10 @@ const UsersTable = () => {
 
       reset(USER_DEFAULT_VALUES);
       closeModal();
-    } catch ({ data: error }) {
-      console.error(error);
+    } catch (error) {
+      console.log(error);
       toaster.create({
         title: `Failed to ${formData.id ? "update" : "create"} the User.`,
-        description: error
-          ? error.error.message
-          : "An unexpected error occurred.",
         type: "error",
         closable: true,
       });
